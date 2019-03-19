@@ -1,0 +1,32 @@
+{% extends 'users/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Register{% endblock %}
+
+{% block switch %}
+    <a href={% url 'users:login' %} class="btn btn-outline-secondary">Login</a>
+{% endblock%}
+
+{% block content %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    <form method="POST" action="{% url 'users:register' %}" id="registerForm" name="registerForm" novalidate>
+    {% csrf_token %}
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                <label>{{field.label}}</label>
+                {{ field|add_class:'form-control'|add_error_class:'is-invalid' }}
+                {% if field.errors %}
+                    <div class="invalid-feedback">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}  
+            </div>
+        {% endfor %}
+    </form>
+    <div class="float-right">
+        <button type="submit" class="btn btn-outline-dark" form="registerForm">Register</button>
+    </div>
+{% endblock %}
