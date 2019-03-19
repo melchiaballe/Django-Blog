@@ -45,13 +45,14 @@ class UserLoginForm(forms.Form):
         return authenticate(request, username=uname, password=pword)
 
 class UpdateUserForm(forms.Form):
+    avatar = forms.ImageField()
     email = forms.CharField(label="Email", widget=forms.EmailInput(attrs={'placeholder': 'email@domain.com'}), required=True)
     firstname = forms.CharField(label="First Name", widget=forms.TextInput(attrs={'placeholder':'First Name'}), max_length=200)
     lastname = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={'placeholder':'Last Name'}), max_length=200)
     about_me = forms.CharField(label="About Me", widget=forms.Textarea(attrs={'placeholder':'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris'}))
 
     def update(self, request):
-        import pdb; pdb.set_trace()
+        avatar = self.cleaned_data.get('avatar')
         email = self.cleaned_data.get('email')
         qs = User.objects.filter(email=email)
         first_name = self.cleaned_data.get('firstname')
@@ -61,7 +62,7 @@ class UpdateUserForm(forms.Form):
         if email != request.user.email and qs.exists() and email != '':
             User.objects.filter(pk=request.user.id).update(email=email, firstname=first_name, lastname=last_name, about_me=about_me)
         else:
-            User.objects.filter(pk=request.user.id).update(firstname=first_name, lastname=last_name, about_me=about_me)
+            User.objects.filter(pk=request.user.id).update(avatar=avatar,firstname=first_name, lastname=last_name, about_me=about_me)
         
 
 
@@ -73,7 +74,7 @@ class UserRegForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['email', 'password']
+        fields = ['avatar','email', 'password']
 
     def clean_email(self):
        email = self.cleaned_data.get('email')

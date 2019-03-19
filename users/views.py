@@ -14,13 +14,16 @@ from .forms import (
     UserRegForm, 
     UpdateUserForm)
 from django.contrib.auth.forms import PasswordChangeForm
+from django.views.generic.base import TemplateView
 
 
 # Create your views here.
-def logout_user(request):
-    logout(request)
-    return redirect('users:login')
 
+class LogoutView(TemplateView):
+    
+    def get(self, request):
+        logout(request)
+        return redirect('users:login')
 
 def process_login(request):
     if request.method == "POST":
@@ -64,6 +67,7 @@ def edit_user(request):
                 form = UpdateUserForm(request.POST)
         else:
             data = {'userid': request.user.id,
+             'avatar': request.user.avatar,
              'email': request.user.email,
              'firstname': request.user.firstname,
              'lastname': request.user.lastname,
