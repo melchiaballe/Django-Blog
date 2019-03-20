@@ -30,12 +30,11 @@
 {% block content %}
     <div class="container">
         <div>
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            <form method="POST" id="updateUserForm" name="updateUserForm" novalidate>
+            <form method="POST" id="addArticle" name="addArticle" novalidate>
             {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
                 {% for field in form.visible_fields %}
                     <div class="form-group">
                         <label>{{field.label}}</label>
@@ -49,7 +48,7 @@
                 {% endfor %}
             </form>
             <div class="float-right">
-                <button type="submit" class="btn btn-outline-dark" form="updateUserForm">Update</button>
+                <button type="submit" class="btn btn-outline-dark" form="addArticle">Post Article</button>
             </div>
         </div>
     </div>

@@ -30,12 +30,11 @@
 {% block content %}
     <div class="container">
         <div>
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            <form method="POST" id="updateUserForm" name="updateUserForm" novalidate>
+            <form method="POST" id="editArticle" name="editArticle" novalidate>
             {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
                 {% for field in form.visible_fields %}
                     <div class="form-group">
                         <label>{{field.label}}</label>
@@ -49,8 +48,32 @@
                 {% endfor %}
             </form>
             <div class="float-right">
-                <button type="submit" class="btn btn-outline-dark" form="updateUserForm">Update</button>
+                <button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#editModal">Edit Article</button>
             </div>
         </div>
     </div>
 {% endblock %}
+
+{% block modal %}
+            <!--
+            FOR MODAL
+        -->
+            <div class="modal fade" id="editModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirm Edit?</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-dark" form="editArticle">Yes</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock modal %}

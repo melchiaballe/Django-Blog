@@ -1,0 +1,77 @@
+{% extends 'users/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Update User Profile{% endblock %}
+
+{% block home %}
+    <a href="{% url 'blog:homepage' %}" class="btn btn-outline-secondary">Home</a>
+{% endblock home %}
+
+{% block switch %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+            {% if request.user.firstname %}
+                {{ request.user.firstname }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+            
+        </a>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
+            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}" >logout</a>
+        </div>
+    </li>
+{% endblock%}
+
+{% block content %}
+    <div class="container-fluid">
+        <div>
+            {% if form %}
+                <div class="container">
+                    <div align="center">
+                        <h2>ARTICLES</h2>
+                        <div align="center">
+                            {% for article in form %}
+                                <li>
+                                    <a href="{% url 'blog:articledetails' article.id%}" ><b>{{article.title}}</b></a>
+                                    <a href="{% url 'blog:editarticle' article.id%}" class="btn btn-outline-secondary"> edit me </a>
+                                    <button class="btn btn-outline-danger" type="button" data-toggle="modal" data-target="#deleteModal">delete me</button>
+                                </li>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block modal %}
+            <!--
+            FOR MODAL
+        -->
+        {% for article in form %}
+            <div class="modal fade" id="deleteModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirm Delete?</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure? <b>{{article.title}}</b> will be deleted</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'blog:deletearticle' article.id%}" class="btn btn-outline-success">Yes</a>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+{% endblock modal %}

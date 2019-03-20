@@ -42,11 +42,9 @@
         </div>
     </nav>
     <br>
-    <div class="container">
-        <div>
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
+    {% block content %}
+    {% endblock %}
+    {% block modal %}
+    {% endblock modal %}
 </body>
 </html>

@@ -29,28 +29,19 @@
 
 {% block content %}
     <div class="container">
-        <div>
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            <form method="POST" id="updateUserForm" name="updateUserForm" novalidate>
-            {% csrf_token %}
-                {% for field in form.visible_fields %}
-                    <div class="form-group">
-                        <label>{{field.label}}</label>
-                        {{ field|add_class:'form-control' |add_error_class:'is-invalid' }}
-                        {% if field.errors %}
-                            <div class="invalid-feedback">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}  
-                    </div>
-                {% endfor %}
-            </form>
-            <div class="float-right">
-                <button type="submit" class="btn btn-outline-dark" form="updateUserForm">Update</button>
+        {% for details in form %}
+            <div align="center">
+                <h1 class="display-3">{{details.title}}</h1>
+                <p>
+                    <b>Author:</b> {{details.owner.get_full_name}} <b>date published:</b> {{details.date_published}}
+                    {% if request.user == details.owner %}
+                        <a href="{% url 'blog:editarticle' details.id%}"><i>edit</i></a>
+                    {% endif %}
+                </p>
             </div>
-        </div>
+            <div class="articledetails">
+                <p class="text-justify">{{details.description}}</p>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

@@ -28,29 +28,20 @@
 {% endblock%}
 
 {% block content %}
-    <div class="container">
+    <div class="container-fluid">
+        <h1> HELLO THERE {{ request.user.email }} </h1>
+        <a href="{% url 'blog:addarticle' %}" class="btn btn-primary"><b>ADD ARTICLE</b></a>
         <div>
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            <form method="POST" id="updateUserForm" name="updateUserForm" novalidate>
-            {% csrf_token %}
-                {% for field in form.visible_fields %}
-                    <div class="form-group">
-                        <label>{{field.label}}</label>
-                        {{ field|add_class:'form-control' |add_error_class:'is-invalid' }}
-                        {% if field.errors %}
-                            <div class="invalid-feedback">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}  
-                    </div>
-                {% endfor %}
-            </form>
-            <div class="float-right">
-                <button type="submit" class="btn btn-outline-dark" form="updateUserForm">Update</button>
-            </div>
+            {% if form %}
+                <div align="center">
+                    <h2>ARTICLES</h2>
+                    {% for article in form %}
+                        <li>
+                            <a href="{% url 'blog:articledetails' article.id%}" ><b>{{article.title}}</b></a>
+                        </li>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

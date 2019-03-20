@@ -13,7 +13,9 @@ from .forms import (
     UserLoginForm, 
     UserRegForm, 
     UpdateUserForm)
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import (
+    PasswordChangeForm, 
+    PasswordResetForm)
 from django.views.generic.base import TemplateView
 
 
@@ -32,7 +34,7 @@ def process_login(request):
             user = form.auth(request)
             if user is not None:
                 login(request, user)
-                return redirect('users:edituser')
+                return redirect('blog:homepage')
             else:
                 form = UserLoginForm(request.POST)
                 form.add_error(None, "Invalid User Entry")
@@ -49,7 +51,7 @@ def register_user(request):
             user = authenticate(email=user.email, password=form.cleaned_data.get('password'))
             if user is not None:
                 login(request, user)
-            return HttpResponse("HELLO THERE NEW USER")
+                return redirect('users:edituser')
         else:
             form = UserRegForm(request.POST)
     else:
@@ -62,7 +64,7 @@ def edit_user(request):
             form = UpdateUserForm(request.POST)
             if form.is_valid():
                 form.update(request)
-                return HttpResponse("HELLO THERE NEW USER")
+                return redirect('blog:homepage')
             else:
                 form = UpdateUserForm(request.POST)
         else:
@@ -90,3 +92,17 @@ def edit_password(request):
         return render(request, 'users/editpassword.html', {'form': form})
     else:
         return redirect('users:login')
+
+
+def reset_password(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            pass
+            #form.save() 
+            return redirect('users:login')
+        else:
+            form = PasswordResetForm(request.POST)
+    else:
+        form = PasswordResetForm()  
+    return render(request, 'users/resetpassword.html', {'form': form})
