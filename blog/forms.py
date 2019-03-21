@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.forms import ModelForm
-from .models import Article
+from .models import Article, ArticleComments
 from django.conf import settings
 
 class AddArticleForm(ModelForm):
@@ -21,3 +21,10 @@ class UpdateArticleForm(ModelForm):
     class Meta:
         model = Article
         fields = ['title', 'article_image', 'description']
+
+class AddComment(ModelForm):
+    content = forms.CharField(label="Comment", widget=forms.TextInput(attrs={'placeholder':'Enter a Comment'}))
+    
+    class Meta:
+        model = ArticleComments
+        fields = ['content']
