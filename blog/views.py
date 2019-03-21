@@ -76,8 +76,9 @@ def delete_article(request, article_id):
 
 def article_details(request, article_id):
     form = Article.objects.filter(pk=article_id)
+    instance = get_object_or_404(Article, pk=article_id)
     commentForm = AddComment()
-    loadComment = ArticleComments.objects.all().order_by('date_published')
+    loadComment = ArticleComments.objects.filter(article=instance).order_by('date_published')
     return render(request, 'blog/articledetails.html', {'form': form, 
     'commentForm': commentForm, 'loadComment':loadComment})
 

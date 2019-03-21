@@ -87,15 +87,15 @@
             <div>
                 <p class="mb-0"> <i><b>{{comments.owner.get_short_name}}:</b></i></p>
                 <p> {{comments.content}}</p>
-                {% for details in form %}
-                    {% if request.user == comments.owner %}
-                        <div class="float-right">
-                            <a class="btn btn-outline-secondary btn-sm">Edit</a>
-                            <button class="btn btn-outline-danger btn-sm" type="button" data-toggle="modal" data-target="#editModal">Delete</button>
-                        </div>
-                    {% endif %}
-                {% endfor %}
             </div>
+            {% for details in form %}
+                {% if request.user == comments.owner %}
+                    <div class="float-right">
+                        <a class="btn btn-outline-secondary btn-sm">Edit</a>
+                        <button class="btn btn-outline-danger btn-sm" type="button" data-toggle="modal" data-target="#editModal">Delete</button>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
         {% endfor %}
     </div>
@@ -119,7 +119,6 @@
                             <p>Are you sure?</p>
                         </div>
                         <div class="modal-footer">
-                        
                             <button type="submit" class="btn btn-outline-success" form="editArticle">Yes</button>
                             <button type="button" class="btn btn-outline-danger" data-dismiss="modal">No</button>
                         </div>
