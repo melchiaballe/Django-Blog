@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}Update User Profile{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block home %}
     <a href="{% url 'blog:homepage' %}" class="btn btn-outline-secondary">Home</a>
@@ -16,30 +16,96 @@
             {% else %}
                 {{ request.user.email }}
             {% endif %}
-            
         </a>
-        <div class="dropdown-menu ">
+        <div class="dropdown-menu">
             <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
             <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
             <a class="dropdown-item" href="{% url 'users:logout' %}" >logout</a>
         </div>
     </li>
+    <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
 {% endblock%}
 
 {% block content %}
     <div class="container-fluid">
-        <h1> HELLO THERE {{ request.user.email }} </h1>
-        <a href="{% url 'blog:addarticle' %}" class="btn btn-primary"><b>ADD ARTICLE</b></a>
-        <div>
+        <div class="container">
+            <div class="float-right">
+                <a href="{% url 'blog:addarticle' %}" class="btn btn-primary btn-sm" ><b>ADD ARTICLE</b></a>
+            </div>
+            <br />
+            <br />
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p> TITLE </p>
+                    </div>
+                    <div class="col-md-8">
+                        <img src="media/articleImage/black.png" alt="Lights" style="width:100%; height:300px">  
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <a href="#" >
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p> TITLE </p>
+                                </div>
+                                <div class="col-md-8">
+                                    <img src="media/articleImage/black.png" alt="Lights" style="width:100%; height:200px">  
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <a href="#" >
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p> TITLE </p>
+                                </div>
+                                <div class="col-md-8">
+                                    <img src="media/articleImage/black.png" alt="Lights" style="width:100%; height:200px">  
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+        </div>
+        <br />
+        <br />
+        <div class = "container">
             {% if form %}
                 <div align="center">
                     <h2>ARTICLES</h2>
+                    <div class="row">
                     {% for article in form %}
+                            <div class="col-md-4">
+                                <div class="thumbnail">
+                                    <a href="{% url 'blog:articledetails' article.id%}" >
+                                        {% if article.article_image %}
+                                            <img src="{{ MEDIA_URL }}{{ article.article_image }}" alt="Lights" style="width:100%; height:200px">
+                                        {% else %}
+                                            <img src="media/articleImage/black.png" alt="Lights" style="width:100%; height:200px">                                       
+                                        {% endif %}
+                                        <div class="caption">
+                                            <b>{{article.title}}</b>
+                                        </div>
+                                    </a>
+                                </div>
+                                <br />
+                            </div>
+                            <br />
+                        <!--
                         <li>
                             <a href="{% url 'blog:articledetails' article.id%}" ><b>{{article.title}}</b></a>
                         </li>
+                        -->                     
                     {% endfor %}
+                    </div>
                 </div>
             {% endif %}
         </div>

@@ -25,7 +25,7 @@
     </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-collapse collapse w-100 ">
                 {% block home %}
                 {% endblock%}
@@ -33,10 +33,12 @@
             <div class="mx-auto order-0">
                 <h1 class="navbar-brand"> Social Blog </h1>
             </div>
-            <div class="navbar-collapse collapse w-100 ">
-                <div class="navbar-nav ml-auto">
-                    {% block switch %}
-                    {% endblock%}
+            <div class="container">
+                <div class="navbar-collapse collapse w-100 ">
+                    <div class="navbar-nav ml-auto">
+                        {% block switch %}
+                        {% endblock%}
+                    </div>
                 </div>
             </div>
         </div>

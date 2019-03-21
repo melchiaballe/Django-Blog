@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}Update User Profile{% endblock %}
+{% block title %}Add Article{% endblock %}
 
 {% block home %}
     <a href="{% url 'blog:homepage' %}" class="btn btn-outline-secondary">Home</a>
@@ -25,12 +25,13 @@
             <a class="dropdown-item" href="{% url 'users:logout' %}" >logout</a>
         </div>
     </li>
+    <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
 {% endblock%}
 
 {% block content %}
     <div class="container">
         <div>
-            <form method="POST" id="addArticle" name="addArticle" novalidate>
+            <form method="POST" id="addArticle" name="addArticle" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}

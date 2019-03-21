@@ -61,9 +61,9 @@ def register_user(request):
 def edit_user(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            form = UpdateUserForm(request.POST)
+            form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
             if form.is_valid():
-                form.update(request)
+                form.save()
                 return redirect('blog:homepage')
             else:
                 form = UpdateUserForm(request.POST)
@@ -74,8 +74,8 @@ def edit_user(request):
              'firstname': request.user.firstname,
              'lastname': request.user.lastname,
              'about_me': request.user.about_me}
-
             form = UpdateUserForm(initial=data)
+
         return render(request, 'users/edituser.html', {'form': form})
     else:
         return redirect('users:login')
@@ -106,3 +106,28 @@ def reset_password(request):
     else:
         form = PasswordResetForm()  
     return render(request, 'users/resetpassword.html', {'form': form})
+
+
+
+# def edit_user(request):
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             import pdb; pdb.set_trace()
+#             form = UpdateUserForm(request.POST, request.FILES)
+#             if form.is_valid():
+#                 form.update(request)
+#                 return redirect('blog:homepage')
+#             else:
+#                 form = UpdateUserForm(request.POST)
+#         else:
+#             data = {'userid': request.user.id,
+#              'avatar': request.user.avatar,
+#              'email': request.user.email,
+#              'firstname': request.user.firstname,
+#              'lastname': request.user.lastname,
+#              'about_me': request.user.about_me}
+
+#             form = UpdateUserForm(initial=data)
+#         return render(request, 'users/edituser.html', {'form': form})
+#     else:
+#         return redirect('users:login')
