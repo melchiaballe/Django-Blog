@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}Add Article{% endblock %}
+{% block title %}Liked Articles{% endblock %}
 
 {% block switch %}
     <div class="btn-group">
@@ -25,28 +25,23 @@
 {% endblock%}
 
 {% block content %}
-    <div class="container">
+    <div class="container-fluid">
         <div>
-            <form method="POST" id="addArticle" name="addArticle" enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
-                {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
-                {% for field in form.visible_fields %}
-                    <div class="form-group">
-                        <label>{{field.label}}</label>
-                        {{ field|add_class:'form-control' |add_error_class:'is-invalid' }}
-                        {% if field.errors %}
-                            <div class="invalid-feedback">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}  
-                    </div>
-                {% endfor %}
-            </form>
-            <div class="float-right">
-                <button type="submit" class="btn btn-outline-dark" form="addArticle">Post Article</button>
+            <div class="container">
+                <div align="center">
+                    <h2>Liked Articles</h2>
+                    {% if form %}
+                        <div align="center">
+                            {% for like in form %}
+                                <li>
+                                    <a href="{% url 'blog:articledetails' like.article.id%}" ><b>{{like.article.title}}</b></a>
+                                </li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
+            
         </div>
     </div>
 {% endblock %}

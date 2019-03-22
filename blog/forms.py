@@ -28,3 +28,10 @@ class AddComment(ModelForm):
     class Meta:
         model = ArticleComments
         fields = ['content']
+
+class EditComment(ModelForm):
+    content = forms.CharField(label="Comment", widget=forms.TextInput(attrs={'placeholder':'Enter a Comment'}))
+    
+    class Meta:
+        model = ArticleComments
+        fields = ['content']

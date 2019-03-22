@@ -15,6 +15,7 @@
         </button>
         <div class="dropdown-menu ">
             <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
@@ -26,10 +27,10 @@
 {% block content %}
     <div class="container-fluid">
         <div>
-            {% if form %}
-                <div class="container">
-                    <div align="center">
-                        <h2>ARTICLES</h2>
+            <div class="container">
+                <div align="center">
+                    <h2>Published Articles</h2>
+                    {% if form %}
                         <div align="center">
                             {% for article in form %}
                                 <li>
@@ -39,9 +40,10 @@
                                 </li>
                             {% endfor %}
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
-            {% endif %}
+            </div>
+            
         </div>
     </div>
 {% endblock %}

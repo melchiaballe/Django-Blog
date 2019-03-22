@@ -17,6 +17,7 @@
         </button>
         <div class="dropdown-menu ">
             <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
@@ -48,6 +49,12 @@
                             <a href="{% url 'blog:articledetails' feature.article.id%}" >
                                 <b>Continue reading</b>
                             </a>
+                            {% if user.is_authenticated %}
+                                <div class="caption">
+                                    <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
+                                    <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="col-md-8">
                             <img src="{{MEDIA_URL}}{{feature.article.article_image}}" style="width:100%; height:300px">  
@@ -57,7 +64,7 @@
                 <div class="row">
                 {% else %}
                     <div class="col-md-6">
-                        <div class="thumbnail">
+                        <div class="thumbnail" >
                             <div class="row">
                                 <div class="col-md-4">
                                     <h2><b> {{ feature.article.title }} </b></h2>
@@ -70,6 +77,12 @@
                                         <img src="{{MEDIA_URL}}{{feature.article.article_image}}" style="width:100%; height:200px">
                                 </div>
                             </div>
+                        <div class="caption">
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
+                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                        {% endif %}
+                        </div>
                         </div>
                     </div>
                 {% endif %}
@@ -87,17 +100,25 @@
                         <div class="col-md-8">
                             {% for article in form %}
                                 <div class="container">
-                                    <div>
-                                        <h2><b>{{article.title}}</b></h2>
-                                        <p>
-                                            <b>Author:</b> {{article.owner.get_full_name}} <b>date published:</b> {{article.date_published}}
-                                        </p>
-                                    </div> 
-                                    <div class="articledetailshome">
-                                        <p class="text-justify">{{article.description|truncatechars:200}}
-                                        <a href="{% url 'blog:articledetails' article.id%}" >
-                                        <b> Continue reading</b></a></p>
+                                    <div style="border-top:1px solid gray">
+                                        <div>
+                                            <h2><b>{{article.title}}</b></h2>
+                                            <p>
+                                                <b>Author:</b> {{article.owner.get_full_name}} <b>date published:</b> {{article.date_published}}
+                                            </p>
+                                        </div> 
+                                        <div class="articledetailshome">
+                                            <p class="text-justify">{{article.description|truncatechars:200}}
+                                            <a href="{% url 'blog:articledetails' article.id%}" >
+                                            <b> Continue reading</b></a></p>
+                                        </div>
+                                        {% if user.is_authenticated %}
+                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
+                                            
+                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                                        {% endif %}
                                     </div>
+                                    <br/>
                                 </div>
                             {% endfor %}
                         </div>

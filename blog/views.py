@@ -5,8 +5,8 @@ from django.shortcuts import (
     redirect, 
     get_object_or_404, 
     HttpResponseRedirect)
-from .forms import AddArticleForm, UpdateArticleForm, AddComment
-from .models import Article, FeaturedArticle, ArticleComments
+from .forms import AddArticleForm, UpdateArticleForm, AddComment, EditComment
+from .models import Article, FeaturedArticle, ArticleComments, ArticleLikes
 from django.core.paginator import Paginator
 # Create your views here.
 
@@ -79,8 +79,13 @@ def article_details(request, article_id):
     instance = get_object_or_404(Article, pk=article_id)
     commentForm = AddComment()
     loadComment = ArticleComments.objects.filter(article=instance).order_by('date_published')
-    return render(request, 'blog/articledetails.html', {'form': form, 
-    'commentForm': commentForm, 'loadComment':loadComment})
+    if request.user.is_authenticated:
+        likes = ArticleLikes.objects.filter(article=instance, owner=request.user)
+        return render(request, 'blog/articledetails.html', {'form': form, 
+        'commentForm': commentForm, 'loadComment':loadComment, 'likes':likes})
+    else:
+        return render(request, 'blog/articledetails.html', {'form': form, 
+        'commentForm': commentForm, 'loadComment':loadComment})
 
 def comment_add(request, article_id):
     if request.user.is_authenticated:
@@ -98,11 +103,52 @@ def comment_add(request, article_id):
     else:
         raise Http404("INVALID ACCESS")
 
-def comment_delete(request, comment_id, article_id):
+def comment_edit(request, comment_id):
+    if request.user.is_authenticated:
+        comments = get_object_or_404(ArticleComments, pk=comment_id)
+        article = get_object_or_404(Article, pk=comments.article.id)
+        data = {'content': comments.content}
+        form = EditComment(initial=data)
+        if request.method == 'POST':
+            commentForm = EditComment(request.POST, instance=comments)
+            if commentForm.is_valid():
+                commentForm.save()
+            return redirect('blog:articledetails', article.id)
+        else:
+            return render(request, 'blog/editcomment.html', {'form': form})
+    else:
+        raise Http404("INVALID ACCESS")
+
+def comment_delete(request, comment_id):
     if request.user.is_authenticated:
         comment = get_object_or_404(ArticleComments, pk=comment_id, owner=request.user)
+        article = get_object_or_404(Article, pk=comment.article.id)
         comment.delete()
-        return redirect('blog:articledetails', article_id)
+        return redirect('blog:articledetails', article.id)
+    else:
+        raise Http404("INVALID ACCESS")
+
+def article_like(request, article_id):
+    if request.user.is_authenticated:
+        article = get_object_or_404(Article, pk=article_id)
+        likes = ArticleLikes.objects.filter(article=article, owner=request.user)
+        if not likes:
+            ArticleLikes.objects.create(likebool=True, article=article, owner=request.user)
+        else:
+            for like in likes:
+                if like.likebool == True:
+                    ArticleLikes.objects.filter(id = like.id).update(likebool = False)
+                else:
+                    ArticleLikes.objects.filter(id = like.id).update(likebool = True)
+
+        return redirect('blog:articledetails', article.id)
+    else:
+        raise Http404("INVALID ACCESS")
+
+def view_liked(request):
+    if request.user.is_authenticated:
+        form = ArticleLikes.objects.filter(owner=request.user, likebool=True).order_by('-date_published')
+        return render(request, 'blog/likedarticlesview.html', {'form': form})
     else:
         raise Http404("INVALID ACCESS")
 # def edit_article(request, article_id):

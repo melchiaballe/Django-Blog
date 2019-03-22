@@ -47,9 +47,9 @@ class UserLoginForm(forms.Form):
 class UpdateUserForm(ModelForm):
     avatar = forms.ImageField()
     email = forms.CharField(label="Email", widget=forms.EmailInput(attrs={'placeholder': 'email@domain.com'}), required=True)
-    firstname = forms.CharField(label="First Name", widget=forms.TextInput(attrs={'placeholder':'First Name'}), max_length=200)
-    lastname = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={'placeholder':'Last Name'}), max_length=200)
-    about_me = forms.CharField(label="About Me", widget=forms.Textarea(attrs={'placeholder':'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris'}))
+    firstname = forms.CharField(label="First Name", widget=forms.TextInput(attrs={'placeholder':'First Name'}), max_length=200, required=False)
+    lastname = forms.CharField(label="Last Name", widget=forms.TextInput(attrs={'placeholder':'Last Name'}), max_length=200, required=False)
+    about_me = forms.CharField(label="About Me", widget=forms.Textarea(attrs={'placeholder':'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris'}), required=False)
 
     class Meta:
         model = User

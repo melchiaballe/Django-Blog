@@ -28,4 +28,14 @@ class ArticleComments(models.Model):
     date_modified = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.article.title + " : " + self.content
+        return self.article.title +" : " + self.content
+
+class ArticleLikes(models.Model):
+    likebool = models.BooleanField()
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date_published = models.DateTimeField(auto_now_add = True)
+    date_modified = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.article.title +" : " + self.owner.get_short_name()
