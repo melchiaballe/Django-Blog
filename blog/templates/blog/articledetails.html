@@ -22,6 +22,7 @@
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
         </div>
     </div>
+    &nbsp
         <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
     {% else %}
         <a href="{% url 'users:login' %}" class="btn btn-outline-secondary"> Login </a>
@@ -62,13 +63,13 @@
                                 {% if likes %}
                                     {% for like in likes %}
                                         {% if like.likebool == True %}
-                                            <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-primary btn-sm">LIKED</a>
+                                            <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-primary btn-sm">LIKED &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
                                         {% else %}
-                                            <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-outline-primary btn-sm">LIKE</a>
+                                            <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-outline-primary btn-sm">LIKE &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                    <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-outline-primary btn-sm">LIKE</a>
+                                    <a href="{% url 'blog:likearticle' details.id%}" class="btn btn-outline-primary btn-sm">LIKE &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
                                 {% endif %}
                                 </div>
                                 <form method="POST" id="addArticle" name="addArticle" action="{% url 'blog:addcomment' details.id %}" novalidate>

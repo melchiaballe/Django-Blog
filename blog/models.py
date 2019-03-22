@@ -10,7 +10,8 @@ class Article(models.Model):
     date_published = models.DateTimeField(auto_now_add = True)
     date_modified = models.DateTimeField(auto_now = True)
     article_image = models.ImageField(upload_to='articleImage/', null=True, blank=True)
-    
+    is_featured = models.BooleanField(default=False)
+
     def __str__(self):
         return self.title
 

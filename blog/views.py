@@ -8,16 +8,18 @@ from django.shortcuts import (
 from .forms import AddArticleForm, UpdateArticleForm, AddComment, EditComment
 from .models import Article, FeaturedArticle, ArticleComments, ArticleLikes
 from django.core.paginator import Paginator
+from django.db.models import Count
 # Create your views here.
 
 def home_page(request):
     featured = FeaturedArticle.objects.order_by('?')[:3]
-    article_list = Article.objects.all().order_by('-date_published')
+    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True))[:3]
+    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True),number_of_comment=Count('articlecomments', distinct=True))[:3]
+    article_list = Article.objects.annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True)).order_by('-date_published')
     paginator = Paginator(article_list, 10)
     page = request.GET.get('page')
     form = paginator.get_page(page)
     return render(request, 'blog/homepage.html', {'form': form, 'featured':featured})
-
 
 def user_articles(request):
     if request.user.is_authenticated:
@@ -81,8 +83,10 @@ def article_details(request, article_id):
     loadComment = ArticleComments.objects.filter(article=instance).order_by('date_published')
     if request.user.is_authenticated:
         likes = ArticleLikes.objects.filter(article=instance, owner=request.user)
+        totallikes = ArticleLikes.objects.filter(article=instance, likebool=True).count()
         return render(request, 'blog/articledetails.html', {'form': form, 
-        'commentForm': commentForm, 'loadComment':loadComment, 'likes':likes})
+        'commentForm': commentForm, 'loadComment':loadComment, 'likes':likes,
+        'totallikes':totallikes})
     else:
         return render(request, 'blog/articledetails.html', {'form': form, 
         'commentForm': commentForm, 'loadComment':loadComment})
@@ -137,7 +141,7 @@ def article_like(request, article_id):
         else:
             for like in likes:
                 if like.likebool == True:
-                    ArticleLikes.objects.filter(id = like.id).update(likebool = False)
+                    ArticleLikes.objects.filter(id = like.id).delete()
                 else:
                     ArticleLikes.objects.filter(id = like.id).update(likebool = True)
 
@@ -179,3 +183,12 @@ def view_liked(request):
 #         return render(request, 'blog/homepage.html', {'form': form})
 #     else:
 #         return redirect('users:login')
+
+# def home_page(request):
+#     featured = FeaturedArticle.objects.order_by('?')[:3]
+#     article_list = Article.objects.all().order_by('-date_published')
+#     import pdb; pdb.set_trace()
+#     paginator = Paginator(article_list, 10)
+#     page = request.GET.get('page')
+#     form = paginator.get_page(page)
+#     return render(request, 'blog/homepage.html', {'form': form, 'featured':featured})

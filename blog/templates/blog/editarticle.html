@@ -23,6 +23,7 @@
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
         </div>
     </div>
+    &nbsp
         <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
     {% else %}
         <a href="{% url 'users:login' %}" class="btn btn-outline-secondary"> Login </a>

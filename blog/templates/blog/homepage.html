@@ -23,6 +23,7 @@
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
         </div>
     </div>
+    &nbsp
         <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
     {% else %}
         <a href="{% url 'users:login' %}" class="btn btn-outline-secondary"> Login </a>
@@ -83,8 +84,8 @@
                             <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
                         {% endif %}
                         </div>
-                        </div>
                     </div>
+                </div>
                 {% endif %}
             {% endfor %}
         </div>
@@ -113,9 +114,9 @@
                                             <b> Continue reading</b></a></p>
                                         </div>
                                         {% if user.is_authenticated %}
-                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
+                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.number_of_likes}}</span></button>
                                             
-                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.number_of_comment}}</span></button>
                                         {% endif %}
                                     </div>
                                     <br/>
