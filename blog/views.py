@@ -109,7 +109,7 @@ def comment_add(request, article_id):
 
 def comment_edit(request, comment_id):
     if request.user.is_authenticated:
-        comments = get_object_or_404(ArticleComments, pk=comment_id)
+        comments = get_object_or_404(ArticleComments, pk=comment_id, owner=request.user)
         article = get_object_or_404(Article, pk=comments.article.id)
         data = {'content': comments.content}
         form = EditComment(initial=data)

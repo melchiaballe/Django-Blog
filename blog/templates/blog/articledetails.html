@@ -108,7 +108,11 @@
                 <div class="d-flex">
                     <img src="{{MEDIA_URL}}{{comments.owner.avatar}}" width="40" height="40">
                     <div>
-                        <p class="mb-0"> &nbsp<i><b>{{comments.owner.get_short_name}}:</b></i></p>
+                        {% if comments.owner.firstname %}
+                            <p class="mb-0"> &nbsp<i><b>{{comments.owner.get_short_name}}:</b></i></p>
+                        {% else %}
+                            <p class="mb-0"> &nbsp<i><b>{{comments.owner.email}}:</b></i></p>
+                        {% endif %}
                         <p> &nbsp{{comments.content}}</p>
                     </div>
                 </div>
