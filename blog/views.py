@@ -179,6 +179,12 @@ def user_follow(request, user_id):
     else:
         raise Http404("INVALID ACCESS")
 
+def view_liked(request):
+    if request.user.is_authenticated:
+        form = ArticleLikes.objects.filter(owner=request.user, likebool=True).order_by('-date_published')
+        return render(request, 'blog/likedarticlesview.html', {'form': form})
+    else:
+        raise Http404("INVALID ACCESS")
 
 # def edit_article(request, article_id):
 #     if request.user.is_authenticated:
