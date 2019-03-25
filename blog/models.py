@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Count
 
 # Create your models here.
 
@@ -31,6 +32,9 @@ class ArticleComments(models.Model):
     def __str__(self):
         return self.article.title +" : " + self.content
 
+    def number_of_comments(self):
+        return Count(self.id)
+
 class ArticleLikes(models.Model):
     likebool = models.BooleanField()
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
@@ -40,3 +44,19 @@ class ArticleLikes(models.Model):
 
     def __str__(self):
         return self.article.title +" : " + self.owner.get_short_name()
+
+    def number_of_likes(self):
+        return Count(self.id)
+
+class UserFollowing(models.Model):
+    followbool = models.BooleanField()
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'following')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user')
+    date_follow = models.DateTimeField(auto_now_add = True)
+    date_modified = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.owner.get_short_name() +" :follows: " + self.following.firstname
+
+    def number_of_followers(self):
+        return Count(self.id)

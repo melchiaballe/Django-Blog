@@ -16,7 +16,7 @@
             {% endif %}
         </button>
         <div class="dropdown-menu ">
-            <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:userarticle' request.user.id%}">Published Articles</a>
             <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>

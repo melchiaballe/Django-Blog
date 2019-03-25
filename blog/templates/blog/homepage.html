@@ -7,6 +7,13 @@
 
 {% block switch %}
     {% if user.is_authenticated %}
+    <div class="input-group ">
+        <input type="text" class="form-control" placeholder="search" aria-label="search" >
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+        </div>
+    </div>
+    &nbsp
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if request.user.firstname %}
@@ -16,7 +23,7 @@
             {% endif %}
         </button>
         <div class="dropdown-menu ">
-            <a class="dropdown-item" href="{% url 'blog:userarticle' %}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:userarticle' request.user.id%}">Published Articles</a>
             <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
@@ -34,7 +41,7 @@
     <div class="container-fluid">
         <div class="container">
         {% if user.is_authenticated %}
-            <div class="float-right">
+            <div class="text-right">
                 <a href="{% url 'blog:addarticle' %}" class="btn btn-outline-primary btn-sm" ><b>ADD ARTICLE</b></a>
             </div>
         {% endif %}
@@ -45,18 +52,28 @@
                 <div class="jumbotron">
                     <div class="row">
                         <div class="col-md-4">
-                            <h2><b> {{ feature.article.title }} </b></h2>
-                            <p>{{ feature.article.description|truncatechars:100 }}</p>
-                            <a href="{% url 'blog:articledetails' feature.article.id%}" >
+                            <h2><b> {{ feature.title }} </b></h2>
+                            <p>
+                                <b>Author:</b> 
+                                <a href="{% url 'blog:userarticle' feature.owner.id%}">
+                                    {% if feature.owner.firstname %}
+                                        {{feature.owner.get_full_name}} 
+                                    {% else %}
+                                        {{feature.owner.email}} 
+                                    {% endif %}
+                                </a>
+                            </p>
+                            <p>{{ feature.description|truncatechars:100 }}</p>
+                            <a href="{% url 'blog:articledetails' feature.id%}" >
                                 <b>Continue reading</b>
                             </a>
                                 <div class="caption">
-                                    <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
-                                    <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                                    <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                                    <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_comment}}</span></button>
                                 </div>
                         </div>
                         <div class="col-md-8">
-                            <img src="{{MEDIA_URL}}{{feature.article.article_image}}" style="width:100%; height:300px">  
+                            <img src="{{MEDIA_URL}}{{feature.article_image}}" style="width:100%; height:300px">  
                         </div>
                     </div>
                 </div>
@@ -65,20 +82,30 @@
                     <div class="col-md-6">
                         <div class="thumbnail" >
                             <div class="row">
-                                <div class="col-md-4">
-                                    <h2><b> {{ feature.article.title }} </b></h2>
-                                    {{ feature.article.description|truncatechars:100 }}
-                                    <a href="{% url 'blog:articledetails' feature.article.id%}" >
+                                <div class="col-md-6">
+                                    <h2><b> {{ feature.title }} </b></h2>
+                                    <p>
+                                        <b>Author:</b> 
+                                        <a href="{% url 'blog:userarticle' feature.owner.id%}">
+                                            {% if feature.owner.firstname %}
+                                                {{feature.owner.get_full_name}} 
+                                            {% else %}
+                                                {{feature.owner.email}} 
+                                            {% endif %}
+                                        </a>
+                                    </p>
+                                    {{ feature.description|truncatechars:100 }}
+                                    <a href="{% url 'blog:articledetails' feature.id%}" >
                                         <b>Continue reading</b>
                                     </a>
                                 </div>
-                                <div class="col-md-8">
-                                        <img src="{{MEDIA_URL}}{{feature.article.article_image}}" style="width:100%; height:200px">
+                                <div class="col-md-6">
+                                        <img src="{{MEDIA_URL}}{{feature.article_image}}" style="width:100%; height:200px">
                                 </div>
                             </div>
                         <div class="caption">
-                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">4</span></button>
-                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">4</span></button>
+                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_comment}}</span></button>
                         </div>
                     </div>
                 </div>
@@ -101,7 +128,16 @@
                                         <div>
                                             <h2><b>{{article.title}}</b></h2>
                                             <p>
-                                                <b>Author:</b> {{article.owner.get_full_name}} <b>date published:</b> {{article.date_published}}
+                                                <b>Author:</b> 
+                                                    <a href="{% url 'blog:userarticle' article.owner.id%}">
+                                                    {% if article.owner.firstname %}
+                                                        {{article.owner.get_full_name}} 
+                                                    {% else %}
+                                                        {{article.owner.email}} 
+                                                    {% endif %}
+                                                </a>
+                                                <b>date published:</b> 
+                                                {{article.date_published}}
                                             </p>
                                         </div> 
                                         <div class="articledetailshome">
@@ -109,8 +145,8 @@
                                             <a href="{% url 'blog:articledetails' article.id%}" >
                                             <b> Continue reading</b></a></p>
                                         </div>
-                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.number_of_likes}}</span></button>
-                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.number_of_comment}}</span></button>
+                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlecomments.number_of_comment}}</span></button>
                                     </div>
                                     <br/>
                                 </div>
