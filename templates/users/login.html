@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block switch %}
+    <a href={% url 'users:register' %} class="btn btn-outline-secondary">Register</a>
+    &nbsp
+    <a href={% url 'users:resetpass' %} class="btn btn-outline-danger">Forgot Password</a>
+{% endblock%}
+
+{% block content %}
+    <div class="container">
+        <div>
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            <form method="POST" action="{% url 'users:login' %}" id="loginForm" name="loginForm" novalidate>
+            {% csrf_token %}
+                {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        <label>{{field.label}}</label>
+                        {{ field|add_class:'form-control'|add_error_class:'is-invalid' }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}  
+                    </div>
+                {% endfor %}
+            </form>
+            <div class="float-right">
+                <button type="submit" class="btn btn-outline-dark" form="loginForm">Login</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

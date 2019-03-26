@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-
+from .views import ArticleTemplateView, HomePageTemplateView
 
 app_name = 'blog'
 urlpatterns = [
@@ -18,4 +18,7 @@ urlpatterns = [
     path('article/like/<int:article_id>', views.article_like, name = "likearticle"),
 
     path('accounts/follow/<int:user_id>', views.user_follow, name = "followuser"),
+    
+    path('drf/article/add', ArticleTemplateView.as_view(), name = "drfarticle"),
+    path('drf/homepage', HomePageTemplateView.as_view(), name = "drfhome"),
 ]

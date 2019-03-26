@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Edit Comment{% endblock %}
+
+
+{% block switch %}
+    {% if user.is_authenticated %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if request.user.firstname %}
+                {{ request.user.firstname }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item" href="{% url 'blog:userarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
+            <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
+            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
+        </div>
+    </div>
+    &nbsp
+        <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+    {% else %}
+        <a href="{% url 'users:login' %}" class="btn btn-outline-secondary"> Login </a>
+    {% endif %}
+{% endblock%}
+
+{% block content %}
+    <div class="container">
+        <div>
+            <form method="POST" id="editComment" name="editComment" novalidate>
+            {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        <label>{{field.label}}</label>
+                        {{ field|add_class:'form-control' |add_error_class:'is-invalid' }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}  
+                    </div>
+                {% endfor %}
+            </form>
+            <div class="float-right">
+                <button class="btn btn-outline-dark" type="button" data-toggle="modal" data-target="#editModal">Edit Comment</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block modal %}
+            <!--
+            FOR MODAL
+        -->
+            <div class="modal fade" id="editModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirm Edit?</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-success" form="editComment">Yes</button>
+                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock modal %}

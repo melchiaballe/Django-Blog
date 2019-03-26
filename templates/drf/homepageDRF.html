@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+
+{% block switch %}
+    {% if user.is_authenticated %}
+    <div class="input-group ">
+        <input type="text" class="form-control" placeholder="search" aria-label="search" >
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+        </div>
+    </div>
+    &nbsp
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if request.user.firstname %}
+                {{ request.user.firstname }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item" href="{% url 'blog:userarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
+            <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
+            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
+        </div>
+    </div>
+    &nbsp
+        <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+    {% else %}
+        <a href="{% url 'users:login' %}" class="btn btn-outline-secondary"> Login </a>
+    {% endif %}
+{% endblock%}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="container">
+        {% if user.is_authenticated %}
+            <!-- PAGINATION PART -->
+            <!--########################################################################################################-->
+        
+            <div class="text-right">
+                <button class="btn btn-outline-primary btn-sm" type="button" data-toggle="modal" data-target="#addModal">ADD ARTICLE</button>
+            </div>
+        
+            <!--########################################################################################################-->
+        
+        {% endif %}
+            <br />
+            <br />
+            {% for feature in featured %}
+                {% if forloop.first %}
+                <div class="jumbotron">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h2><b> {{ feature.title }} </b></h2>
+                            <p>
+                                <b>Author:</b> 
+                                <a href="{% url 'blog:userarticle' feature.owner.id%}">
+                                    {% if feature.owner.firstname %}
+                                        {{feature.owner.get_full_name}} 
+                                    {% else %}
+                                        {{feature.owner.email}} 
+                                    {% endif %}
+                                </a>
+                            </p>
+                            <p>{{ feature.description|truncatechars:100 }}</p>
+                            <a href="{% url 'blog:articledetails' feature.id%}" >
+                                <b>Continue reading</b>
+                            </a>
+                                <div class="caption">
+                                    <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                                    <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_comment}}</span></button>
+                                </div>
+                        </div>
+                        <div class="col-md-8">
+                            <img src="{{MEDIA_URL}}{{feature.article_image}}" style="width:100%; height:300px">  
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                {% else %}
+                    <div class="col-md-6">
+                        <div class="thumbnail" >
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2><b> {{ feature.title }} </b></h2>
+                                    <p>
+                                        <b>Author:</b> 
+                                        <a href="{% url 'blog:userarticle' feature.owner.id%}">
+                                            {% if feature.owner.firstname %}
+                                                {{feature.owner.get_full_name}} 
+                                            {% else %}
+                                                {{feature.owner.email}} 
+                                            {% endif %}
+                                        </a>
+                                    </p>
+                                    {{ feature.description|truncatechars:100 }}
+                                    <a href="{% url 'blog:articledetails' feature.id%}" >
+                                        <b>Continue reading</b>
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                        <img src="{{MEDIA_URL}}{{feature.article_image}}" style="width:100%; height:200px">
+                                </div>
+                            </div>
+                        <div class="caption">
+                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_comment}}</span></button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <br />
+        <br />
+        <div class = "container">
+            {% if form %}
+                <div>
+                    <div align="center">
+                        <h2><b>ARTICLES</b></h2>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% for article in form %}
+                                <div class="container">
+                                    <div style="border-top:1px solid gray">
+                                        <div id="articles">
+                                            <h2><b>{{article.title}}</b></h2>
+                                            <p>
+                                                <b>Author:</b> 
+                                                    <a href="{% url 'blog:userarticle' article.owner.id%}">
+                                                    {% if article.owner.firstname %}
+                                                        {{article.owner.get_full_name}} 
+                                                    {% else %}
+                                                        {{article.owner.email}} 
+                                                    {% endif %}
+                                                </a>
+                                                <b>date published:</b> 
+                                                {{article.date_published}}
+                                            </p>
+                                        </div> 
+                                        <div class="articledetailshome">
+                                            <p class="text-justify">{{article.description|truncatechars:200}}
+                                            <a href="{% url 'blog:articledetails' article.id%}" >
+                                            <b> Continue reading</b></a></p>
+                                        </div>
+                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
+                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlecomments.number_of_comment}}</span></button>
+                                    </div>
+                                    <br/>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 mb-3 bg-light rounded">
+                                <h4 class="font-italic">About</h4>
+                                <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+                            </div>
+
+                            <div class="p-3">
+                                <h4 class="font-italic">Archives</h4>
+                                <ol class="list-unstyled mb-0">
+                                <li><a href="#">March 2014</a></li>
+                                <li><a href="#">February 2014</a></li>
+                                <li><a href="#">January 2014</a></li>
+                                <li><a href="#">December 2013</a></li>
+                                <li><a href="#">November 2013</a></li>
+                                <li><a href="#">October 2013</a></li>
+                                <li><a href="#">September 2013</a></li>
+                                <li><a href="#">August 2013</a></li>
+                                <li><a href="#">July 2013</a></li>
+                                <li><a href="#">June 2013</a></li>
+                                <li><a href="#">May 2013</a></li>
+                                <li><a href="#">April 2013</a></li>
+                                </ol>
+                            </div>
+
+                            <div class="p-3">
+                                <h4 class="font-italic">Elsewhere</h4>
+                                <ol class="list-unstyled">
+                                <li><a href="#">GitHub</a></li>
+                                <li><a href="#">Twitter</a></li>
+                                <li><a href="#">Facebook</a></li>
+                                </ol>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+                <!-- PAGINATION PART -->
+                <!--########################################################################################################-->
+                <div class="container">
+                    <div align="center">
+                        <ul class="pagination justify-content-center">
+                            {% if form.has_previous %}
+                                <a class="page-link" href="?page={{ form.previous_page_number }}">previous</a>
+                            {% endif %}
+
+                            {% for i in form.paginator.page_range %}
+                                {% if form.number == i %}
+                                    <li class="active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if form.has_next %}
+                                <a class="page-link" href="?page={{ form.next_page_number }}">next</a>
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block modal %}
+            <div class="modal fade" id="addModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add Article</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addArticle" class="article-form" method="POST" action="{% url 'users:articleviewset' %}">
+                            {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="title" class="col-form-label">Title:</label>
+                                    <input type="text" class="form-control" id="title" name="title">
+                                </div>
+                                {% comment %} <div class="form-group">
+                                    <label for="image" class="col-form-label">Image:</label>
+                                    <input type="file" class="form-control" id="image">
+                                </div> {% endcomment %}
+                                <div class="form-group">
+                                    <label for="description" class="col-form-label">Description:</label>
+                                    <textarea class="form-control" id="description" name="description"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-primary" form="addArticle">Confirm</button>
+                            <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock modal %}

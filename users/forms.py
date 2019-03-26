@@ -21,24 +21,6 @@ class UserLoginForm(forms.Form):
     email = forms.CharField(label="Email", widget=forms.EmailInput(attrs={'placeholder': 'email@domain.com'}), required=True)
     password = forms.CharField(label= "Password", widget=forms.PasswordInput(attrs={'placeholder': 'Password'}), required=True)
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        qs = User.objects.filter(email=email)
-        if qs is None:
-           raise forms.ValidationError('Invalid Email')
-
-        return email
-
-    def check_password(self):
-        password = self.cleaned_data.get('password')
-        email = self.cleaned_data.get('email')
-        qs = User.objects.filter(email=email)
-
-        if qs.password != password:
-            raise forms.ValidationError('Invalid Password')
-
-        return password
-
     def auth(self, request):
         uname = self.cleaned_data.get('email')
         pword = self.cleaned_data.get('password')

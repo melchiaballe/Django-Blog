@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="POST" class="article-form" action="{% url 'users:articleviewset' %}">
+    {% csrf_token %}
+        <input type="text" placeholder="title" name="title">
+        <textarea placeholder="description" name="description"></textarea>
+        <button type="submit">hello</button>
+    </form>
+
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Handle</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+{% endblock content %}

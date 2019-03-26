@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Add Article{% endblock %}
+
+{% block switch %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if request.user.firstname %}
+                {{ request.user.firstname }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item" href="{% url 'blog:userarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
+            <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
+            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
+        </div>
+    </div>
+    &nbsp
+    <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+{% endblock%}
+
+{% block content %}
+    <div class="container">
+        <div>
+            <form method="POST" id="addArticle" name="addArticle" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        <label>{{field.label}}</label>
+                        {{ field|add_class:'form-control' |add_error_class:'is-invalid' }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}  
+                    </div>
+                {% endfor %}
+            </form>
+            <div class="float-right">
+                <button type="submit" class="btn btn-outline-dark" form="addArticle">Post Article</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
