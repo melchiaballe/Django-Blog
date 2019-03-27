@@ -18,7 +18,9 @@
     <nav class="navbar navbar-expand-md" style="border-bottom: 3px solid gray;">
         <div class="container-fluid" >
             <div class="navbar-collapse collapse w-100 ">
-                <a href="{% url 'blog:homepage' %}" class="btn btn-outline-secondary">Home</a>
+                {% block home %}
+                    <a href="{% url 'blog:homepage' %}" class="btn btn-outline-secondary">Home</a>
+                {% endblock home %}
             </div>
             <div class="mx-auto order-0">
                 <h1 class="navbar-brand"> Social Blog </h1>

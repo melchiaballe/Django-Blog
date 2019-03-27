@@ -198,4 +198,129 @@
                     <span class="sr-only">Next</span>
                 </a>
             </div>
+
+
+    def home_page(request):
+    #featured = FeaturedArticle.objects.order_by('?')[:3]
+    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True))[:3]
+    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True),number_of_comment=Count('articlecomments', distinct=True))[:3]
+    #article_list = Article.objects.annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True)).order_by('-date_published')
+    featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
+    article_list = Article.objects.all().order_by('-date_published')
+    paginator = Paginator(article_list, 10)
+    page = request.GET.get('page')
+    form = paginator.get_page(page)
+    return render(request, 'blog/homepage.html', {'form': form, 'featured':featured})
+
+
+
+
+#
+#
+#------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------SERIALIZERS---------------------------------------------------------
+#
+#
+
+# class UserList(generics.CreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+# class UserRegisterList(generics.ListCreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserRegisterSerializer
+
+# class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserRegisterSerializer
+
+# def edit_user(request):
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             import pdb; pdb.set_trace()
+#             form = UpdateUserForm(request.POST, request.FILES)
+#             if form.is_valid():
+#                 form.update(request)
+#                 return redirect('blog:homepage')
+#             else:
+#                 form = UpdateUserForm(request.POST)
+#         else:
+#             data = {'userid': request.user.id,
+#              'avatar': request.user.avatar,
+#              'email': request.user.email,
+#              'firstname': request.user.firstname,
+#              'lastname': request.user.lastname,
+#              'about_me': request.user.about_me}
+
+#             form = UpdateUserForm(initial=data)
+#         return render(request, 'users/edituser.html', {'form': form})
+#     else:
+#         return redirect('users:login')
+
+#----------------------------------------------------------------------------------------------------------------------
+
+# def process_login(request):
+#     if request.method == "POST":
+#         form = UserLoginForm(request.POST)
+#         if form.is_valid():
+#             user = form.auth(request)
+#             if user is not None:
+#                 login(request, user)
+#                 return redirect('blog:homepage')
+#             else:
+#                 form = UserLoginForm(request.POST)
+#                 form.add_error(None, "Invalid User Entry") 
+#     else:
+#         form = UserLoginForm()
+#         return render(request, 'users/login.html', {'form':form})
+
+# def register_user(request):
+#     if request.method == 'POST':
+#         form = UserRegForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             user = authenticate(email=user.email, password=form.cleaned_data.get('password'))
+#             if user is not None:
+#                 login(request, user)
+#                 return redirect('users:edituser')
+#         else:
+#             form = UserRegForm(request.POST)
+#     else:
+#         form = UserRegForm()
+#     return render(request, 'users/register.html', {'form': form})
+
+# def edit_user(request):
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
+#             if form.is_valid():
+#                 form.save()
+#                 return redirect('blog:homepage')
+#             else:
+#                 form = UpdateUserForm(request.POST)
+#         else:
+#             data = {'userid': request.user.id,
+#              'avatar': request.user.avatar,
+#              'email': request.user.email,
+#              'firstname': request.user.firstname,
+#              'lastname': request.user.lastname,
+#              'about_me': request.user.about_me}
+#             form = UpdateUserForm(initial=data)
+
+#         return render(request, 'users/edituser.html', {'form': form})
+#     else:
+#         return redirect('users:login')
+
+# def edit_password(request):
+#     if request.user.is_authenticated:
+#         if request.method == 'POST':
+#             form = PasswordChangeForm(request.user, request.POST)
+#             if form.is_valid():
+#                 form.save()
+#                 return redirect('users:logout')
+#         else:
+#             form = PasswordChangeForm(request.user)
+#         return render(request, 'users/editpassword.html', {'form': form})
+#     else:
+#         return redirect('users:login')
 -->

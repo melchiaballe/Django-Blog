@@ -19,10 +19,6 @@ from .serializers import ArticleSerializer, CommentSerializer
 from django.views.generic.base import TemplateView
 
 def home_page(request):
-    #featured = FeaturedArticle.objects.order_by('?')[:3]
-    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True))[:3]
-    #featured = Article.objects.filter(is_featured=True).order_by('?').annotate(number_of_likes=Count('articlelikes', distinct=True),number_of_comment=Count('articlecomments', distinct=True))[:3]
-    #article_list = Article.objects.annotate(number_of_likes=Count('articlelikes', distinct=True)).annotate(number_of_comment=Count('articlecomments', distinct=True)).order_by('-date_published')
     featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
     article_list = Article.objects.all().order_by('-date_published')
     paginator = Paginator(article_list, 10)

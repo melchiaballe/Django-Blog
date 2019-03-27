@@ -5,7 +5,6 @@
 {% block title %}Home{% endblock %}
 
 
-
 {% block home %}
     <a href="{% url 'blog:drfhome' %}" class="btn btn-outline-secondary">Home</a>
 {% endblock %}
@@ -44,6 +43,9 @@
 
 
 {% block content %}
+<h1>Hello world</h1>
+    <ul id="mylist"></ul>
+    {% comment %}
     <div class="container-fluid">
         <div class="container">
         {% if user.is_authenticated %}
@@ -126,106 +128,13 @@
         </div>
         <br />
         <br />
-        <div class = "container">
-            {% if form %}
-                <div>
-                    <div align="center">
-                        <h2><b>ARTICLES</b></h2>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-8" id="articles">
-                            {% for article in form %}
-                                <div class="container">
-                                    <div style="border-top:1px solid gray">
-                                        <div>
-                                            <h2><b>{{article.title}}</b></h2>
-                                            <p>
-                                                <b>Author:</b> 
-                                                    <a href="{% url 'blog:userarticle' article.owner.id%}">
-                                                    {% if article.owner.firstname %}
-                                                        {{article.owner.get_full_name}} 
-                                                    {% else %}
-                                                        {{article.owner.email}} 
-                                                    {% endif %}
-                                                </a>
-                                                <b>date published:</b> 
-                                                {{article.date_published}}
-                                            </p>
-                                        </div> 
-                                        <div class="articledetailshome">
-                                            <p class="text-justify">{{article.description|truncatechars:200}}
-                                            <a href="{% url 'blog:articledetails' article.id%}" >
-                                            <b> Continue reading</b></a></p>
-                                        </div>
-                                            <button class="btn btn-primary btn-sm">Likes &nbsp<span class="badge badge-light">{{article.articlelikes.number_of_likes}}</span></button>
-                                            <button class="btn btn-secondary btn-sm">Comments &nbsp<span class="badge badge-light">{{article.articlecomments.number_of_comment}}</span></button>
-                                    </div>
-                                    <br/>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <div class="col-md-4">
-                            <div class="p-3 mb-3 bg-light rounded">
-                                <h4 class="font-italic">About</h4>
-                                <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-                            </div>
-
-                            <div class="p-3">
-                                <h4 class="font-italic">Archives</h4>
-                                <ol class="list-unstyled mb-0">
-                                <li><a href="#">March 2014</a></li>
-                                <li><a href="#">February 2014</a></li>
-                                <li><a href="#">January 2014</a></li>
-                                <li><a href="#">December 2013</a></li>
-                                <li><a href="#">November 2013</a></li>
-                                <li><a href="#">October 2013</a></li>
-                                <li><a href="#">September 2013</a></li>
-                                <li><a href="#">August 2013</a></li>
-                                <li><a href="#">July 2013</a></li>
-                                <li><a href="#">June 2013</a></li>
-                                <li><a href="#">May 2013</a></li>
-                                <li><a href="#">April 2013</a></li>
-                                </ol>
-                            </div>
-
-                            <div class="p-3">
-                                <h4 class="font-italic">Elsewhere</h4>
-                                <ol class="list-unstyled">
-                                <li><a href="#">GitHub</a></li>
-                                <li><a href="#">Twitter</a></li>
-                                <li><a href="#">Facebook</a></li>
-                                </ol>
-                            </div>
-                        </div>                
-                    </div>
-                </div>
-                <!-- PAGINATION PART -->
-                <!--########################################################################################################-->
-                <div class="container">
-                    <div align="center">
-                        <ul class="pagination justify-content-center">
-                            {% if form.has_previous %}
-                                <a class="page-link" href="?page={{ form.previous_page_number }}">previous</a>
-                            {% endif %}
-
-                            {% for i in form.paginator.page_range %}
-                                {% if form.number == i %}
-                                    <li class="active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                                {% else %}
-                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if form.has_next %}
-                                <a class="page-link" href="?page={{ form.next_page_number }}">next</a>
-                            {% endif %}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            {% endif %}
+        <div class="container">
+                <ul id="article-list"></ul>
         </div>
     </div>
+    {% endcomment %}
+
+
 {% endblock %}
 
 
@@ -239,7 +148,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <form id="addArticle" class="article-form" method="POST" action="{% url 'endpoint:drfarticle' %}">
+                            <form id="addArticle" class="article-form" method="POST" action="{% url 'blog:drfarticle' %}">
                             
                             {% csrf_token %}
                                 <div class="form-group">
@@ -265,3 +174,168 @@
                 </div>
             </div>
 {% endblock modal %}
+
+
+
+
+[{
+    'id': 1,
+    'title': 'foo',
+},
+{
+    'id': 2,
+    'title': 'bar',
+}]
+
+
+#List of articles
+$.ajax({
+
+
+
+}).done(function(data){
+    var id = data.id
+    get_comments(id);
+    get_likes(id);
+
+});
+
+
+function get_comments(articleId) {
+    $.get({'api_to_cmments}')
+}
+
+
+function get_likes(articleId) {
+    $.get('/api/article/'+articleId+'/likes').done(function(data){
+        
+    });
+}
+
+
+// var myElem =$('#myId') # hashtag for ID
+// var myElem =$('.myId') # class
+
+
+
+// myELem.on('click', function(){
+
+// })
+$(document).ready(function(){
+    console.log("I AM READY")
+    /* get list of articles */
+    // $.get('/api/article').done(function(data){
+    //     data.forEach(function(e) {
+    //         var temp = '<li class="article-'+e.id+'">'+ e.title + 
+    //                     '<div class="comments">loading...</div>' +
+    //                     '</li>';
+    //         $('#mylist').append(temp);
+
+    //         setTimeout(function(){
+    //             loadComments();
+    //         }, 1000);
+            
+    //         function loadComments() {
+    //             var commentData = {'comment': 'hello world'};
+    //             var commentTemplate = '<span class="small">'+ commentData.comment +'</span>'
+    //             $('.article-'+e.id).find('.comments').html(commentTemplate);
+    //         }
+
+
+    //     });
+    // });
+
+    var articleForm = $('.article-form');
+
+
+    $('.article-form').on('submit', function(event) {
+        event.preventDefault();
+        //create article
+        var dt = $('#date').val(new Date($.now()));
+        var url = $(this).attr('action');
+        console.log($(this).serialize(), "data");
+        var jqhr = $.ajax({
+                url:url,
+                method:$(this).attr('method'),
+                data: $(this).serialize()
+            }).done(function(data){
+                var article = data;
+                console.log(article, 'article data')
+                // $.get('user/'+article.owner).done(function(data){
+                //     var user = data;
+                createTemplate(article)
+                //});
+                    
+
+                
+            }).errors(function(error) {
+                console.log(error, 'error');
+            });
+
+            function createTemplate(article) {
+                var template = 
+                    "<div class=\"container\">"
+                    +    "<div style=\"border-top:1px solid gray\">"
+                    +        "<div><h2><b>" 
+                    +            article.title
+                    +            "</b></h2> <p><b> Author: </b>"
+                    +            "<a>"
+                    +                "author name or email"
+                    +            "</a> <b>date published:</b>"
+                    +        "</p></div>"
+                    +    "<div class=\"articledetailshome\">"
+                    +        "<p class=\"text-justify\">"
+                    +            jQuery.trim(data.description).substring(0, 199).split(" ").slice(0, -1).join(" ") + "..."
+                    +            "<a href=\"/article/details/"+article.id+"\" >"
+                    +            "<b> Continue Reaing</b></a></p>"
+                    +    "</div>"
+                    +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span class=\"badge badge-light\"></span></button>"
+                    +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span class=\"badge badge-light\"></span></button>"
+                    +"</div><br/>";
+                //$('.table').append(template);
+                $('#articles').prepend(template);
+                $('#addModal').modal('hide');
+                console.log(data, 'data');
+            }
+    });
+});
+
+{/* <div class="articledetailshome">
+<p class="text-justify">{{article.description|truncatechars:200}}
+<a href="{% url 'blog:articledetails' article.id%}" >
+<b> Continue reading</b></a></p>
+</div> */}
+
+
+
+
+# class ArticeViewSet(Viewset)
+
+#     def detail(self, request, **kwargs):
+#         article = Article.objects.get(kwargs.get('id'))
+#         serializer = ArticleSerializer(article)
+#         return Response(serializer.data, status=200)
+
+#     def delete(self, request, **kwargs):
+#         article = Article.objects.get(kwargs.get('id'))
+#         article.delete()
+#         return Response({}, status=202)
+    
+#     def add_comment(self, request, **kwargs):
+#         article = get_object_or_404(Article, id=kwargs.get('id'))
+#         data = request.data
+#         serializer = CommentSerializer(data=data)
+#         if serializer.is_valid():
+#             data = serializer.save()
+#             return Response(serializer.data, status=201)
+#         return Response(serializer.errors, status=123)
+
+#     def get_all_comments(self,)
+#         comments = Comments.objects.filter(article__id=kwargs.get('id'))
+#         serializer = CommentSerializer(comments, many=True)
+#         return Response(serializer.data, status=200)
+
+# url.py 
+#     path('articles/<int:id>', ArticeViewSet.as_view({'get': 'detail'}), name="detail")
+#     path('articles/<int:id>', ArticeViewSet.as_view({'post': 'delete'}), name="delete")
+#     path('articles/<int:id>/comment', ArticeViewSet.as_view({'post': 'add_comment'}), name="add-comment")
