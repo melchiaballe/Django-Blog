@@ -10,10 +10,12 @@ from .models import Article, FeaturedArticle, ArticleComments, ArticleLikes, Use
 from django.core.paginator import Paginator
 from django.db.models import Count
 from users.models import User
-
 from rest_framework import viewsets
-# Create your views here.
+
 #-----------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------
+
 from rest_framework import generics
 from .serializers import ArticleSerializer, CommentSerializer
 from django.views.generic.base import TemplateView
@@ -54,7 +56,7 @@ def edit_article(request, article_id):
                 form = UpdateArticleForm(request.POST, request.FILES, initial=data, instance=qs)
                 if form.is_valid():
                         form.save()
-                        return redirect('blog:userarticle')
+                        return redirect('blog:userarticle', request.user.id)
                 else:
                     form = UpdateArticleForm(initial=data)
             else:
@@ -181,13 +183,6 @@ def user_follow(request, user_id):
     else:
         raise Http404("INVALID ACCESS")
 
-def view_liked(request):
-    if request.user.is_authenticated:
-        form = ArticleLikes.objects.filter(owner=request.user, likebool=True).order_by('-date_published')
-        return render(request, 'blog/likedarticlesview.html', {'form': form})
-    else:
-        raise Http404("INVALID ACCESS")
-
 
 #
 #--------------------------------------------------------------------------------------------------------------------------------------
@@ -195,15 +190,85 @@ def view_liked(request):
 #--------------------------------------------------------------------------------------------------------------------------------------
 #
 
+class UserArticlesTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        user = User.objects.get(pk=kwargs.get('user_id'))
+        # form = Article.objects.filter(owner=kwargs.get('user_id')).order_by('-date_published')
+        # if request.user.is_authenticated:
+        #     follow = UserFollowing.objects.filter(following=user, owner=request.user)
+        #     return render(request, 'drf/userarticlesDRF.html', {'form': form, 'user':user, 'follow':follow})
+        # else:
+        #     return render(request, 'drf/userarticlesDRF.html', {'form': form, 'user':user})
+        return render(request, 'drf/userarticlesDRF.html', {'user': user})
+
 class ArticleTemplateView(TemplateView):
     template_name = "drf/articleform.html"
 
 class HomePageTemplateView(TemplateView):
     
     def get(self, request):
-        featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
-        article_list = Article.objects.all().order_by('-date_published')
-        paginator = Paginator(article_list, 10)
-        page = request.GET.get('page')
-        form = paginator.get_page(page)
-        return render(request, 'drf/homepageDRF.html', {'form': form, 'featured':featured}) 
+        #featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
+        # article_list = Article.objects.all().order_by('-date_published')
+        # paginator = Paginator(article_list, 10)
+        # page = request.GET.get('page')
+        # form = paginator.get_page(page)
+        return render(request, 'drf/homepageDRF.html')
+
+class EditArticleTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        import pdb; pdb.set_trace()
+        if request.user.is_authenticated:
+            qs = Article.objects.get(pk=kwargs.get('article_id'))
+            data = {'article_image': qs.article_image,
+                    'title': qs.title,
+                    'description': qs.description}
+            if request.user == qs.owner:
+                form = UpdateArticleForm(initial=data)
+            else:
+                raise Http404("INVALID ACCESS")
+
+            return render(request, 'drf/userarticlesDRF.html', {'form': form})
+        else:
+            return redirect('users:login')
+
+    def post(self, request, **kwargs):
+        if request.user.is_authenticated:
+            qs = Article.objects.get(pk=kwargs.get('article_id'))
+            data = {'article_image': qs.article_image,
+                    'title': qs.title,
+                    'description': qs.description}
+            if request.user == qs.owner:
+                if request.method == 'POST':
+                    form = UpdateArticleForm(request.POST, request.FILES, initial=data, instance=qs)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('blog:userarticle', request.user.id)
+                    else:
+                        form = UpdateArticleForm(initial=data)
+                else:
+                    form = UpdateArticleForm(initial=data)
+                return render(request, 'drf/userarticlesDRF.html', {'form': form})
+            else:
+                raise Http404("INVALID ACCESS")
+        else:
+            return redirect('users:login')
+
+
+class ArticleDetailsTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        instance = get_object_or_404(Article, pk=kwargs.get('article_id'))
+        if request.user.is_authenticated:
+            likes = ArticleLikes.objects.filter(article=instance, owner=request.user)
+            totallikes = ArticleLikes.objects.filter(article=instance, likebool=True).count()
+            return render(request, 'drf/articledetailsDRF.html', { 'likes':likes,
+            'totallikes':totallikes, 'instance':instance})
+        else:
+            return render(request, 'drf/articledetailsDRF.html', {'instance':instance})
+
+class UserArticleLikesTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        return render(request, 'drf/userlikedarticlesDRF.html')

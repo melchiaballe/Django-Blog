@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from users.serializers import UserSerializer
 
 class NewArticleViewSet(viewsets.ViewSet):
-    
+
     def create_article(self, request, **kwargs):
         import pdb; pdb.set_trace()
         article = Article.objects.all()
@@ -35,18 +35,29 @@ class NewArticleViewSet(viewsets.ViewSet):
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=200)
     
+    def list_featured_articles(self, request, **kwargs):
+        articles =  Article.objects.filter(is_featured=True).order_by('?')[:3]
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=200)
+
+    def list_user_article(self, request, **kwargs):
+        user =  get_object_or_404(User, id=kwargs.get('user_id'))
+        article = Article.objects.filter(owner=user)
+        serializer = ArticleSerializer(article, many=True)
+        return Response(serializer.data, status=200)
+    
     def article_details(self, request, **kwargs):
         articles = Article.objects.get(id=kwargs.get('article_id'))
         serializer = ArticleSerializer(articles)
         return Response(serializer.data, status=200)
 
     def delete_article(self, request, **kwargs):
-        article = Article.objects.get(id=kwargs.get('article_id'))
+        article = get_object_or_404(Article, id=kwargs.get('article_id'), owner=request.user)
         article.delete()
         return Response({}, status=202)
     
     def update_article(self, request, **kwargs):
-        instance = get_object_or_404(Article, id=kwargs.get('article_id'))
+        instance = get_object_or_404(Article, id=kwargs.get('article_id'), owner=request.user)
         data = request.data
         serializer = ArticleSerializer(instance, data=data)
         if serializer.is_valid():
@@ -69,7 +80,7 @@ class CommentViewSet(viewsets.ViewSet):
     
     def list_comments_article(self, request, **kwargs):
         article =  get_object_or_404(Article, id=kwargs.get('article_id'))
-        comments = ArticleComments.objects.filter(article=article)
+        comments = ArticleComments.objects.filter(article=article).order_by('-date_published')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=200)
 
@@ -84,12 +95,12 @@ class CommentViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=200)
     
     def delete_comment(self, request, **kwargs):
-        comment = ArticleComments.objects.get(id=kwargs.get('comment_id'))
+        comment = get_object_or_404(ArticleComments, id=kwargs.get('comment_id'), owner=request.user)
         comment.delete()
         return Response({}, status=202)
     
     def update_comment(self, request, **kwargs):
-        instance = get_object_or_404(ArticleComments, id=kwargs.get('comment_id'))
+        instance = get_object_or_404(ArticleComments, id=kwargs.get('comment_id'), owner=request.user)
         data = request.data
         serializer = CommentSerializer(instance, data=data)
         if serializer.is_valid():
@@ -138,6 +149,12 @@ class LikeViewSet(viewsets.ViewSet):
         serializer = LikeSerializer(like)
         return Response(serializer.data, status=200)
 
+    def list_user_liked_article(self, request, **kwargs):
+        user =  get_object_or_404(User, id=kwargs.get('user_id'))
+        likes = ArticleLikes.objects.filter(owner=request.user, likebool=True).order_by('-date_published')
+        serializer = LikeSerializer(likes, many=True)
+        return Response(serializer.data, status=200)
+
     def list_likes_article(self, request, **kwargs):
         article =  get_object_or_404(Article, id=kwargs.get('article_id'))
         like = ArticleLikes.objects.filter(article=article)
@@ -145,6 +162,6 @@ class LikeViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=200)
     
     def delete_like(self, request, **kwargs):
-        like = ArticleLikes.objects.get(id=kwargs.get('like_id'))
+        like = get_object_or_404(ArticleLikes, id=kwargs.get('like_id'), owner=request.user)
         like.delete()
         return Response({}, status=202)

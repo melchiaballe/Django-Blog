@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Liked Articles{% endblock %}
+
+{% block home %}
+    <a href="{% url 'blog:drfhome' %}" class="btn btn-outline-secondary">Home</a>
+{% endblock %}
+
+{% block switch %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if request.user.firstname %}
+                {{ request.user.firstname }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu ">
+            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:viewliked' %}" >Liked Articles</a>
+            <a class="dropdown-item" href="{% url 'users:edituser' %}">Edit User Details</a>
+            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
+        </div>
+    </div>
+    &nbsp
+    <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+{% endblock%}
+
+{% block content %}
+<input type="hidden" id="user_id" value="{{request.user.id}}">
+    <div class="container-fluid">
+        <div>
+            <div class="container">
+                <div align="center">
+                    <h2>Liked Articles</h2>
+                        <div align="center" id="likedarticles">
+                        </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/userlikedarticles.js' %}"></script>
+{% endblock %}
