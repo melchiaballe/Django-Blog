@@ -89,10 +89,9 @@
 {% block modal %}
 <div class="modal fade" id="edit_comment" role="dialog">
     <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Edit Article</h4>
+                <h4 class="modal-title">Edit Comment</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -100,7 +99,7 @@
                 {% csrf_token %}
                     <div class="form-group">
                         <label for="content" class="col-form-label">Comment Content:</label>
-                        <textarea class="form-control" id="content" name="content"></textarea>
+                        <textarea class="form-control" id="comment_content" name="comment_content"></textarea>
                     </div>
                     <input type="hidden" class="form-control" id="edit_comment_id" name="edit_comment_id">
                     <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
@@ -116,7 +115,6 @@
 
 <div class="modal fade" id="delete_comment" role="dialog">
     <div class="modal-dialog">
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Delete Comment</h4>

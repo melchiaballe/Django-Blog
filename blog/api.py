@@ -118,7 +118,10 @@ class CommentViewSet(viewsets.ViewSet):
     
     def update_comment(self, request, **kwargs):
         instance = get_object_or_404(ArticleComments, id=kwargs.get('comment_id'), owner=request.user)
-        data = request.data
+        #data = request.data
+        data =  request.data.copy()
+        content_data = request.data.get('comment_content')
+        data['content'] = content_data
         serializer = CommentSerializer(instance, data=data)
         if serializer.is_valid():
             data = serializer.save()

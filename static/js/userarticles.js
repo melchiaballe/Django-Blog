@@ -15,12 +15,49 @@ $(document).ready(function(){
         var article_id = $(this).data('id');
         console.log(article_id)
         $("#edit_article_id").val( article_id );
+
+        var url = base_url + "/api/article/details/" +article_id
+
+        $.ajax({
+            url:url,
+            method: 'get',
+        }).done(function(data){
+            console.log(data)
+            $("#title").val(data.title)
+            $("#description").val(data.description)
+        }).errors(function(error){
+            console.log(error)
+        })
     })
 
     $(document).on('click', '#delete', function(event){
         var article_id = $(this).data('id');
         console.log(article_id)
         $("#delete_article_id").val( article_id );
+    })
+
+    $('#editArticle').on('submit', function(event){
+        event.preventDefault();
+        article_id = $('#edit_article_id').val();
+
+        url =  base_url+"/api/article/update/"+article_id;
+        $.ajax({
+            url:url,
+            method:$(this).attr('method'),
+            data: $(this).serialize()
+        }).done(function(data){
+            console.log("done")
+            $("#article_title"+article_id).html(data.title);
+            $("#article_description"+article_id).html(
+                "<p class=\"text-justify\">"
+                +   jQuery.trim(data.description).substring(0, 150).split(" ").slice(0, -1).join(" ") + "..."
+                +   "<a href=\""+base_url+"/drf/article/details/"+data.id+"\" >"
+                +   "<b> Continue Reaing</b></a></p>"
+            );  
+            $('#edit_article').modal('hide');
+        }).errors(function(error){
+            console.log(error, 'error')
+        })
     })
 
     $('#deleteArticle').on('submit', function(event){
@@ -48,12 +85,12 @@ $(document).ready(function(){
         var template = 
             "<div class=\"container\" id=\"article"+article.id+"\">"
             +    "<div align=\"center\" style=\"border-top:1px solid gray\">"
-            +        "<div><h2><b>" 
+            +        "<div><h2><b id=\"article_title"+article.id+"\">" 
             +            article.title
             +            "</b></h2> <p><b> Author: </b>"
             +                name
             +        "</p></div>"
-            +    "<div class=\"articledetailshome\">"
+            +    "<div class=\"articledetailshome\" id=\"article_description"+article.id+"\">"
             +        "<p class=\"text-justify\">"
             +            jQuery.trim(article.description).substring(0, 150).split(" ").slice(0, -1).join(" ") + "..."
             +            "<a href=\""+base_url+"/drf/article/details/"+article.id+"\" >"
@@ -100,8 +137,6 @@ $(document).ready(function(){
                 +    "</div>"
                 +"</div>"
             +"</div>"
-            
-            
         }
         return btn;
     }

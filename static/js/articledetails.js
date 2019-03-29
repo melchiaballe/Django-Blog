@@ -5,7 +5,7 @@ $(document).ready(function(){
     var article_id = $('#article_id').val();
     var user_id = $('#user_id').val();
 
-    $.get(base_url +'/api/article/'+article_id).done(function(data){
+    $.get(base_url +'/api/article/details/'+article_id).done(function(data){
         articleDetails(data);
     })
 
@@ -16,9 +16,39 @@ $(document).ready(function(){
         })
     })
 
+    $('#editComment').on('submit', function(event){
+        event.preventDefault();
+        comment_id = $('#edit_comment_id').val();
+
+        url =  base_url+"/api/comment/update/"+comment_id;
+        $.ajax({
+            url:url,
+            method:$(this).attr('method'),
+            data: $(this).serialize()
+        }).done(function(data){
+            console.log("done")
+            $('#comment_content'+data.id).html("&nbsp"+data.content)
+            $('#edit_comment').modal('hide');
+        }).errors(function(error){
+            console.log(error, 'error')
+        })
+    })
+
     $(document).on('click', '#edit', function(event){
         var comment_id = $(this).data('id');
         $("#edit_comment_id").val( comment_id );
+
+        var url = base_url + "/api/comment/details/" +comment_id
+
+        $.ajax({
+            url:url,
+            method: 'get',
+        }).done(function(data){
+            console.log(data)
+            $("#comment_content").val(data.content)
+        }).errors(function(error){
+            console.log(error)
+        })
     })
 
     $(document).on('click', '#delete', function(event){
@@ -74,7 +104,7 @@ $(document).ready(function(){
         +            img
         +            "<div>"
         +                "&nbsp<i><b>"+name+"</b></i>"
-        +                "<p>&nbsp" + data.content + "</p>"
+        +                "<p id=\"comment_content"+data.id+"\">&nbsp" + data.content + "</p>"
         +            "</div>"
         +        "</div>"
         +    "</div>"

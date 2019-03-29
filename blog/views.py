@@ -26,7 +26,6 @@ def home_page(request):
     paginator = Paginator(article_list, 10)
     page = request.GET.get('page')
     form = paginator.get_page(page)
-    import pdb; pdb.set_trace()
     return render(request, 'blog/homepage.html', {'form': form, 'featured':featured})
 
 def add_article(request):
