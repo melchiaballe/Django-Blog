@@ -42,6 +42,7 @@
 
 {% block content %}
 <input type="hidden" id="user_id" value="{{user.id}}">
+<input type="hidden" id="request_user_id" value="{{request.user.id}}">
     <div class="container-fluid">
         <div>
             <div class="container">
@@ -102,31 +103,70 @@
     </div>
 {% endblock %}
 
+
 {% block modal %}
-            <!--
-            FOR MODAL
-        -->
-        {% for article in form %}
-            <div class="modal fade" id="deleteModal" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Confirm Delete?</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure? <b>{{article.title}}</b> will be deleted</p>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="{% url 'blog:deletearticle' article.id%}" class="btn btn-outline-success">Yes</a>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                        </div>
-                    </div>
-                </div>
+<div class="modal fade" id="edit_article" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Article</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-        {% endfor %}
+            <div class="modal-body">
+                <form id="editArticle" method="POST">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    {% comment %} <div class="form-group">
+                        <label for="image" class="col-form-label">Image:</label>
+                        <input type="file" class="form-control" id="image">
+                    </div> {% endcomment %}
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <input type="hidden" class="form-control" id="edit_article_id" name="edit_article_id">
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="editArticle">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete_article" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Article</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deleteArticle" method="POST">
+                {% csrf_token %}
+                    <div align="center">
+                        <label>Confirm Article Delete?</label>
+                    </div>
+                    <input type="hidden" class="form-control" id="delete_article_id" name="delete_article_id">
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="deleteArticle">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock modal %}
+
 
 {% block javascript %}
     <script type="text/javascript" src="{% static 'js/userarticles.js' %}"></script>

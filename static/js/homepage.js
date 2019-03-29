@@ -24,10 +24,10 @@ $(document).ready(function(){
 
     $('.article-form').on('submit', function(event) {
         event.preventDefault();
+        console.log("-------------------------------------------")
         //create article
         var dt = $('#date').val(new Date($.now()));
         var url = $(this).attr('action');
-
         var jqhr = $.ajax({
                 url:url,
                 method:$(this).attr('method'),

@@ -11,21 +11,64 @@ $(document).ready(function(){
 
     $.get(base_url +'/api/article/'+article_id+'/comments').done(function(data) {
         data.forEach(function(e){
-            getComments(e);
+            template = getComments(e);
+            $('#comment_section').prepend(template)
         })
     })
 
-    // $('#deletecomment').on('click', function(event) {
-    //     $.ajax({
-    //         url: base_url+"/api/comment/"+data.id+"/delete"
-    //     })
-    // })
+    $(document).on('click', '#edit', function(event){
+        var comment_id = $(this).data('id');
+        $("#edit_comment_id").val( comment_id );
+    })
+
+    $(document).on('click', '#delete', function(event){
+        var comment_id = $(this).data('id');
+        console.log(comment_id)
+        $("#delete_comment_id").val( comment_id );
+    })
+
+    $('#addComment').on('submit', function(event){
+        event.preventDefault();
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$");
+        var url = $(this).attr('action');
+        
+        $.ajax({
+            url:url,
+            method: $(this).attr('method'),
+            data: $(this).serialize()
+        }).done(function(data) {
+            var comment = data;
+            template = getComments(comment)
+            $('#comment_section').append(template)
+        }).errors(function(data) {
+            console.log(error, 'error');
+        })
+    })
+
+    $('#deleteComment').on('submit', function(event){
+        event.preventDefault();
+        comment_id = $('#delete_comment_id').val()
+
+        url =  base_url+"/api/comment/"+comment_id+"/delete";
+        $.ajax({
+            url:url,
+            method:$(this).attr('method'),
+            data: $(this).serialize()
+        }).done(function(){
+            console.log("done")
+            $("#comment"+comment_id).remove();
+            $('#delete_comment').modal('hide');
+        }).errors(function(error){
+            console.log(error, 'error')
+        })
+    })
 
     function getComments(data){
         name = getName(data);
         img = userAvatar(data);
         edit = enableEditDelete(data);
-        var template="<div class=\"row\">"
+        var template=
+        "<div class=\"row\" id=\"comment" + data.id+"\">"
         +    "<div class=\"col-md-10\">"
         +        "<div class=\"d-flex\">"
         +            img
@@ -40,7 +83,7 @@ $(document).ready(function(){
         +    "</div>"
         +"</div>"
 
-        $('#comment_section').prepend(template)
+        return template
     }
 
     function userAvatar(data) {
@@ -76,8 +119,9 @@ $(document).ready(function(){
         var edit = "";
         if(data.owner.id == user_id)
         {
-            edit = "<button class=\"btn btn-outline-secondary btn-sm\" type=\"button\" data-toggle=\"modal\" data-target=\"#edit_comment\">Edit</button> &nbsp"
-            + "<button id=\"deletecomment\" class=\"btn btn-outline-danger btn-sm\" >Delete</button>"
+            edit = 
+            "<button id=\"edit\" name=\"edit\" class=\"btn btn-outline-secondary btn-sm\" data-id=\""+data.id+"\" data-toggle=\"modal\" data-target=\"#edit_comment\">Edit</button> &nbsp"
+            + "<button id=\"delete\" name=\"delete\" class=\"btn btn-outline-danger btn-sm\" data-id=\""+data.id+"\" data-toggle=\"modal\" data-target=\"#delete_comment\" >Delete</button>"
         }
         return edit;
     }

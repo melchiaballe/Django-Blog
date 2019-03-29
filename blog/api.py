@@ -15,23 +15,40 @@ from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 
+#TESTING
+#from rest_framework.pagination import PageNumberPagination
+from django.core.paginator import Paginator
+
+
+    # article_list = Article.objects.all().order_by('-date_published')
+    # paginator = Paginator(article_list, 10)
+    # page = request.GET.get('page')
+    # form = paginator.get_page(page)
+
+
 from users.serializers import UserSerializer
+
+# class StandardResultsSetPagination(PageNumberPagination):
+#     page_size = 10
+#     max_page_size = 10
 
 class NewArticleViewSet(viewsets.ViewSet):
 
     def create_article(self, request, **kwargs):
-        import pdb; pdb.set_trace()
         article = Article.objects.all()
         user = request.user
-        data = request.data
-        serializer = ArticleSerializer(data=data)
+        serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.save(owner=user)
+            serializer.save(owner=user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
     
     def list_articles(self, request, **kwargs):
         articles =  Article.objects.all()
+        #pagination_class = StandardResultsSetPagination
+        # paginator = Paginator(articles, 10)
+        # page = request.GET.get('page')
+        # form = paginator.get_page(page)
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=200)
     
@@ -74,7 +91,7 @@ class CommentViewSet(viewsets.ViewSet):
         article =  get_object_or_404(Article, id=kwargs.get('article_id'))
         serializer = CommentSerializer(data=data)
         if serializer.is_valid():
-            data = serializer.save()
+            data = serializer.save(article=article, owner=user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
     

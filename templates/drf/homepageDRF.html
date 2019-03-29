@@ -105,9 +105,6 @@
                 </div>
                 <!-- PAGINATION PART -->
                 <!--########################################################################################################-->
-                {% comment %} <div class="container"{% block javascript %}
-    <script type="text/javascript" src="{% static 'js/homepage.js' %}"></script>
-{% endblock %}>
                     <div align="center">
                         <ul class="pagination justify-content-center">
                             {% if form.has_previous %}
@@ -128,8 +125,7 @@
                             </li>
                         </ul>
                     </div>
-                </div> {% endcomment %}
-            {% comment %} {% endif %} {% endcomment %}
+                </div>
         </div>
     </div>
 {% endblock %}

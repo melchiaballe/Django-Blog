@@ -26,6 +26,7 @@ def home_page(request):
     paginator = Paginator(article_list, 10)
     page = request.GET.get('page')
     form = paginator.get_page(page)
+    import pdb; pdb.set_trace()
     return render(request, 'blog/homepage.html', {'form': form, 'featured':featured})
 
 def add_article(request):
@@ -206,14 +207,14 @@ class ArticleTemplateView(TemplateView):
     template_name = "drf/articleform.html"
 
 class HomePageTemplateView(TemplateView):
-    
-    def get(self, request):
-        #featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
-        # article_list = Article.objects.all().order_by('-date_published')
-        # paginator = Paginator(article_list, 10)
-        # page = request.GET.get('page')
-        # form = paginator.get_page(page)
-        return render(request, 'drf/homepageDRF.html')
+    template_name = "drf/homepageDRF.html"
+    # def get(self, request):
+    #     #featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
+    #     # article_list = Article.objects.all().order_by('-date_published')
+    #     # paginator = Paginator(article_list, 10)
+    #     # page = request.GET.get('page')
+    #     # form = paginator.get_page(page)
+    #     return render(request, 'drf/homepageDRF.html')
 
 class EditArticleTemplateView(TemplateView):
 

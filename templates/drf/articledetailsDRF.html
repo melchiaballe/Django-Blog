@@ -60,15 +60,15 @@
                                     <a href="{% url 'blog:likearticle' instance.id%}" class="btn btn-outline-primary btn-sm">LIKE &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
                                 {% endif %}
                                 </div>
-                                <form method="POST" id="addArticle" name="addArticle" action="{% url 'blog:addcomment' instance.id %}" novalidate>
-                                {% csrf_token %}
+                                <form method="POST" id="addComment" name="addComment" action="{% url 'endpoint:drfcommentpost' instance.id%}" novalidate>
+                                    {% csrf_token %}
                                         <div class="form-group">
                                             <label>Comment</label>
-                                            <input type="text" class='form-control' placeholder='Enter a comment'>
+                                            <input type="text" id="content" name="content" class='form-control' placeholder='Enter a comment'>
                                         </div>
                                 </form>
-                            <div class="float-right">
-                                <button type="submit" class="btn btn-outline-dark" form="addArticle">Add Comment</button>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-outline-dark" form="addComment">Add Comment</button>
                             </div>
                         </div>
                     </div>
@@ -87,31 +87,58 @@
 
 
 {% block modal %}
-            <div class="modal fade" id="edit_comment" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add Article</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editComment" method="POST">
-                            {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="content" class="col-form-label">Comment Content:</label>
-                                    <textarea class="form-control" id="content" name="content"></textarea>
-                                </div>
-                                <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-outline-primary" form="editComment">Confirm</button>
-                            <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+<div class="modal fade" id="edit_comment" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Article</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+            <div class="modal-body">
+                <form id="editComment" method="POST">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="content" class="col-form-label">Comment Content:</label>
+                        <textarea class="form-control" id="content" name="content"></textarea>
+                    </div>
+                    <input type="hidden" class="form-control" id="edit_comment_id" name="edit_comment_id">
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="editComment">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete_comment" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Comment</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deleteComment" method="POST">
+                {% csrf_token %}
+                    <div align="center">
+                        <label>Confirm Comment Delete?</label>
+                    </div>
+                    <input type="hidden" class="form-control" id="delete_comment_id" name="delete_comment_id">
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="deleteComment">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock modal %}
 
 {% block javascript %}
