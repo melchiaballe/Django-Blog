@@ -132,40 +132,40 @@
 
 
 {% block modal %}
-            <div class="modal fade" id="addModal" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add Article</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="addArticle" class="article-form" method="POST" action="{% url 'endpoint:drflistarticle' %}">
-                            
-                            {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="title" class="col-form-label">Title:</label>
-                                    <input type="text" class="form-control" id="title" name="title">
-                                </div>
-                                {% comment %} <div class="form-group">
-                                    <label for="image" class="col-form-label">Image:</label>
-                                    <input type="file" class="form-control" id="image">
-                                </div> {% endcomment %}
-                                <div class="form-group">
-                                    <label for="description" class="col-form-label">Description:</label>
-                                    <textarea class="form-control" id="description" name="description"></textarea>
-                                </div>
-                                <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-outline-primary" form="addArticle">Confirm</button>
-                            <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+<div class="modal fade" id="addModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Article</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+            <div class="modal-body">
+                <form id="addArticle" class="article-form" method="POST" action="{% url 'endpoint:drflistarticle' %}">
+                
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    {% comment %} <div class="form-group">
+                        <label for="image" class="col-form-label">Image:</label>
+                        <input type="file" class="form-control" id="image">
+                    </div> {% endcomment %}
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="addArticle">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock modal %}
 
 

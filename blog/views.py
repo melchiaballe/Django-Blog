@@ -207,6 +207,18 @@ class ArticleTemplateView(TemplateView):
 
 class HomePageTemplateView(TemplateView):
     template_name = "drf/homepageDRF.html"
+
+class ArticleDetailsTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        instance = get_object_or_404(Article, pk=kwargs.get('article_id'))
+        return render(request, 'drf/articledetailsDRF.html', {'instance':instance})
+
+class UserArticleLikesTemplateView(TemplateView):
+
+    def get(self, request, **kwargs):
+        return render(request, 'drf/userlikedarticlesDRF.html')
+
     # def get(self, request):
     #     #featured = Article.objects.filter(is_featured=True).order_by('?')[:3]
     #     # article_list = Article.objects.all().order_by('-date_published')
@@ -215,60 +227,42 @@ class HomePageTemplateView(TemplateView):
     #     # form = paginator.get_page(page)
     #     return render(request, 'drf/homepageDRF.html')
 
-class EditArticleTemplateView(TemplateView):
+# class EditArticleTemplateView(TemplateView):
 
-    def get(self, request, **kwargs):
-        import pdb; pdb.set_trace()
-        if request.user.is_authenticated:
-            qs = Article.objects.get(pk=kwargs.get('article_id'))
-            data = {'article_image': qs.article_image,
-                    'title': qs.title,
-                    'description': qs.description}
-            if request.user == qs.owner:
-                form = UpdateArticleForm(initial=data)
-            else:
-                raise Http404("INVALID ACCESS")
+#     def get(self, request, **kwargs):
+#         import pdb; pdb.set_trace()
+#         if request.user.is_authenticated:
+#             qs = Article.objects.get(pk=kwargs.get('article_id'))
+#             data = {'article_image': qs.article_image,
+#                     'title': qs.title,
+#                     'description': qs.description}
+#             if request.user == qs.owner:
+#                 form = UpdateArticleForm(initial=data)
+#             else:
+#                 raise Http404("INVALID ACCESS")
 
-            return render(request, 'drf/userarticlesDRF.html', {'form': form})
-        else:
-            return redirect('users:login')
+#             return render(request, 'drf/userarticlesDRF.html', {'form': form})
+#         else:
+#             return redirect('users:login')
 
-    def post(self, request, **kwargs):
-        if request.user.is_authenticated:
-            qs = Article.objects.get(pk=kwargs.get('article_id'))
-            data = {'article_image': qs.article_image,
-                    'title': qs.title,
-                    'description': qs.description}
-            if request.user == qs.owner:
-                if request.method == 'POST':
-                    form = UpdateArticleForm(request.POST, request.FILES, initial=data, instance=qs)
-                    if form.is_valid():
-                        form.save()
-                        return redirect('blog:userarticle', request.user.id)
-                    else:
-                        form = UpdateArticleForm(initial=data)
-                else:
-                    form = UpdateArticleForm(initial=data)
-                return render(request, 'drf/userarticlesDRF.html', {'form': form})
-            else:
-                raise Http404("INVALID ACCESS")
-        else:
-            return redirect('users:login')
-
-
-class ArticleDetailsTemplateView(TemplateView):
-
-    def get(self, request, **kwargs):
-        instance = get_object_or_404(Article, pk=kwargs.get('article_id'))
-        if request.user.is_authenticated:
-            likes = ArticleLikes.objects.filter(article=instance, owner=request.user)
-            totallikes = ArticleLikes.objects.filter(article=instance, likebool=True).count()
-            return render(request, 'drf/articledetailsDRF.html', { 'likes':likes,
-            'totallikes':totallikes, 'instance':instance})
-        else:
-            return render(request, 'drf/articledetailsDRF.html', {'instance':instance})
-
-class UserArticleLikesTemplateView(TemplateView):
-
-    def get(self, request, **kwargs):
-        return render(request, 'drf/userlikedarticlesDRF.html')
+#     def post(self, request, **kwargs):
+#         if request.user.is_authenticated:
+#             qs = Article.objects.get(pk=kwargs.get('article_id'))
+#             data = {'article_image': qs.article_image,
+#                     'title': qs.title,
+#                     'description': qs.description}
+#             if request.user == qs.owner:
+#                 if request.method == 'POST':
+#                     form = UpdateArticleForm(request.POST, request.FILES, initial=data, instance=qs)
+#                     if form.is_valid():
+#                         form.save()
+#                         return redirect('blog:userarticle', request.user.id)
+#                     else:
+#                         form = UpdateArticleForm(initial=data)
+#                 else:
+#                     form = UpdateArticleForm(initial=data)
+#                 return render(request, 'drf/userarticlesDRF.html', {'form': form})
+#             else:
+#                 raise Http404("INVALID ACCESS")
+#         else:
+#             return redirect('users:login')

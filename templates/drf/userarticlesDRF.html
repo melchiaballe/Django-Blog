@@ -47,7 +47,7 @@
         <div>
             <div class="container">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8    ">
                     <div align="center">
                         {% if request.user.id != user.id %}
                             {% if user.firstname %}
@@ -63,11 +63,11 @@
                         <div id='articles'>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <div align="center">
                         {% if request.user.is_authenticated %}
                             {% if request.user.id != user.id %}
-                                <div class="text-right">
+                                <div class="text-right" id="follow_user">
                                 {% comment %} {% if follow %}
                                     {% for fllw in follow %}
                                         {% if fllw.followbool == True %}
@@ -80,6 +80,11 @@
                                     <a href = "{% url 'blog:followuser' user.id%}" class="btn btn-outline-primary btn-sm" ><b>Follow Me</b></a>
                                 {% endif %}                {% endcomment %}
                                 </div>
+                                <br/>
+                            {% else %}
+                                <div id="follow_container">
+                                </div>
+                                <br/>
                             {% endif %}
                         {% endif %}
                         <img src="{{user.avatar.url}}" width="200px" height="200px">
@@ -161,6 +166,38 @@
             <div class="modal-footer">
                 <button type="submit" class="btn btn-outline-primary" form="deleteArticle">Confirm</button>
                 <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="following_modal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Following</h4>
+            </div>
+            <div class="modal-body" id="following_base">
+            </div>
+            <div class="modal-footer">
+                <button id="dismiss_following" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="follower_modal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Followers</h4>
+            </div>
+            <div class="modal-body" id="follower_base">
+            </div>
+            <div class="modal-footer">
+                <button id="dismiss_follower" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

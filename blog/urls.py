@@ -4,7 +4,6 @@ from . import views
 from .views import (
     ArticleTemplateView, 
     HomePageTemplateView, 
-    EditArticleTemplateView, 
     UserArticlesTemplateView, 
     ArticleDetailsTemplateView,
     UserArticleLikesTemplateView)
@@ -28,7 +27,6 @@ urlpatterns = [
 
     path('drf/homepage', HomePageTemplateView.as_view(), name = "drfhome"),
     path('drf/user/article/<int:user_id>', UserArticlesTemplateView.as_view(), name = "drfuserarticle"),
-    path('drf/article/<int:article_id>', EditArticleTemplateView.as_view(), name = "drfeditarticle"),
     path('drf/article/details/<int:article_id>', ArticleDetailsTemplateView.as_view(), name = "drfarticledetails"),
     path('drf/user/article/likes', UserArticleLikesTemplateView.as_view(), name = "drfuserlikearticle"),
 ]

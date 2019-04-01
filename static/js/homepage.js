@@ -42,6 +42,8 @@ $(document).ready(function(){
 
     function articleTemplate(article) {
         var name = getName(article);
+        var total_likes = getTotalLikes(article.id);
+        var total_comments = getTotalComments(article.id);
 
         var template = 
             "<div class=\"container\">"
@@ -59,8 +61,8 @@ $(document).ready(function(){
             +            "<a href=\"article/details/"+article.id+"\" >"
             +            "<b> Continue Reaing</b></a></p>"
             +    "</div>"
-            +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span class=\"badge badge-light\"></span></button>"
-            +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span class=\"badge badge-light\"></span></button>"
+            +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+            +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
         $('#articles').prepend(template);
         $('#addModal').modal('hide');
@@ -68,6 +70,8 @@ $(document).ready(function(){
 
     function jumbotronTemplate(article) {
         var name = getName(article);
+        var total_likes = getTotalFeaturedLikes(article.id);
+        var total_comments = getTotalFeaturedComments(article.id);
 
         var template = "<div class=\"row\">"
         +   "<div class=\"col-md-4\">"
@@ -83,8 +87,8 @@ $(document).ready(function(){
         +               "<b>Continue reading</b>"
         +           "</a>"
         +       "<div class=\"caption\">"
-        +           "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span class=\"badge badge-light\"></span></button>"
-        +           "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span class=\"badge badge-light\"></span></button>"
+        +           "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"featured_like_id"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+        +           "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"featured_total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +       "</div>"
         +   "</div>"
         +   "<div class=\"col-md-8\">"
@@ -97,6 +101,9 @@ $(document).ready(function(){
 
     function thumbnailTemplate(article) {
         var name = getName(article);
+        var total_likes = getTotalThumbnailLikes(article.id);
+        var total_comments = getTotalThumbnailComments(article.id);
+
         var template = "<div class=\"col-md-6\">"
         +    "<div class=\"thumbnail\">"
         +            "<div class=\"row\">"
@@ -118,8 +125,8 @@ $(document).ready(function(){
         +                "</div>"
         +            "</div>"
         +        "<div class=\"caption\">"
-        +            "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span class=\"badge badge-light\"></span></button>"
-        +            "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span class=\"badge badge-light\"></span></button>"
+        +            "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"thumbnail_like_id"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+        +            "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"thumbnail_total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +        "</div>"
         +    "</div>"
         +"</div>"
@@ -138,5 +145,41 @@ $(document).ready(function(){
             name = article.owner.email;
         }
         return name;
+    }
+
+    function getTotalLikes(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
+            $('#total_likes'+article_id).html(data)
+        })
+    }
+
+    function getTotalFeaturedLikes(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
+            $('#featured_like_id'+article_id).html(data)
+        })
+    }
+
+    function getTotalThumbnailLikes(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
+            $('#thumbnail_like_id'+article_id).html(data)
+        })
+    }
+
+    function getTotalComments(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
+            $('#total_comments'+article_id).html(data)
+        })
+    }
+
+    function getTotalFeaturedComments(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
+            $('#featured_total_comments'+article_id).html(data)
+        })
+    }
+
+    function getTotalThumbnailComments(article_id){
+        $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
+            $('#thumbnail_total_comments'+article_id).html(data)
+        })
     }
 });

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Article, ArticleComments, ArticleLikes
+from .models import Article, ArticleComments, ArticleLikes, UserFollowing
 from users.serializers import UserSerializer
 
 
@@ -30,9 +30,17 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class LikeSerializer(serializers.ModelSerializer):
 
-    owner = UserSerializer()
-    article = ArticleSerializer()
+    owner = UserSerializer(read_only=True)
+    article = ArticleSerializer(read_only=True)
     
     class Meta:
         model = ArticleLikes
         fields = ['id', 'likebool', 'article', 'owner']
+
+class FollowSerializer(serializers.ModelSerializer):
+    following = UserSerializer(read_only=True)
+    owner = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = UserFollowing
+        fields = ['id', 'followbool', 'following', 'owner']

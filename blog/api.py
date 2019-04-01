@@ -11,7 +11,7 @@ from django.db.models import Count
 from users.models import User
 
 from rest_framework import generics
-from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer
+from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer, FollowSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -127,6 +127,11 @@ class CommentViewSet(viewsets.ViewSet):
             data = serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+    
+    def total_comments_article(self, request, **kwargs):
+        article =  get_object_or_404(Article, id=kwargs.get('article_id'))
+        totalcomments = ArticleComments.objects.filter(article=article).count()
+        return Response(totalcomments, status=200)
 
 class UserViewSet(viewsets.ViewSet):
     
@@ -177,11 +182,89 @@ class LikeViewSet(viewsets.ViewSet):
 
     def list_likes_article(self, request, **kwargs):
         article =  get_object_or_404(Article, id=kwargs.get('article_id'))
-        like = ArticleLikes.objects.filter(article=article)
+        like = ArticleLikes.objects.filter(article=article, likebool=True)
         serializer = LikeSerializer(like, many=True)
         return Response(serializer.data, status=200)
+
+    def total_likes_article(self, request, **kwargs):
+        article =  get_object_or_404(Article, id=kwargs.get('article_id'))
+        totallikes = ArticleLikes.objects.filter(article=article, likebool=True).count()
+        return Response(totallikes, status=200)
+
+    def user_likes_article(self, request, **kwargs):
+        article =  get_object_or_404(Article, id=kwargs.get('article_id'))
+        userlike = ArticleLikes.objects.filter(article=article, likebool=True, owner=request.user)
+
+        if not userlike:
+            returnbool = False
+        else:
+            returnbool = True
+
+        return Response(returnbool, status=200)
     
+    def create_like(self, request, **kwargs):
+        article = get_object_or_404(Article, id=kwargs.get('article_id'))
+        owner = request.user
+        data = request.data
+        serializer = LikeSerializer(data=data)
+        if serializer.is_valid():
+            data = serializer.save(article=article, owner=owner)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
     def delete_like(self, request, **kwargs):
-        like = get_object_or_404(ArticleLikes, id=kwargs.get('like_id'), owner=request.user)
+        article = get_object_or_404(Article, id=kwargs.get('article_id'))
+        like = get_object_or_404(ArticleLikes, article=article, owner=request.user)
         like.delete()
+        return Response({}, status=202)
+
+class FollowViewSet(viewsets.ViewSet):
+
+    def list_follow(self, request, **kwargs):
+        follow = UserFollowing.objects.all()
+        serializer = FollowSerializer(follow, many=True)
+        return Response(serializer.data, status=200)
+    
+    def user_follows_list(self, request, **kwargs):
+        user = UserFollowing.objects.filter(owner=request.user)
+        serializer = FollowSerializer(user, many=True)
+        return Response(serializer.data, status=200)
+        
+    def total_user_following(self, request, **kwargs):
+        followingtotal = UserFollowing.objects.filter(owner=request.user).count()
+        return Response(followingtotal, status=200)
+
+    def total_user_follower(self, request, **kwargs):
+        followertotal = UserFollowing.objects.filter(following=request.user).count()
+        return Response(followertotal, status=200)
+    
+    def user_followers_list(self, request, **kwargs):
+        user = UserFollowing.objects.filter(following=request.user)
+        serializer = FollowSerializer(user, many=True)
+        return Response(serializer.data, status=200)        
+
+    def owner_follows_user(self, request, **kwargs):
+        user = get_object_or_404(User, id=kwargs.get('user_id'))
+        userfollow = UserFollowing.objects.filter(following = user, followbool=True, owner=request.user)
+        if not userfollow:
+            returnbool = False
+        else:
+            returnbool = True
+        return Response(returnbool, status=200)
+
+    def create_follow(self, request, **kwargs):
+        follow = get_object_or_404(User, id=kwargs.get('user_id'))
+        owner = request.user
+        data = request.data
+        serializer = FollowSerializer(data=data)
+        if serializer.is_valid():
+            data = serializer.save(following=follow, owner=owner)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    
+    def delete_follow(self, request, **kwargs):
+        follow = get_object_or_404(User, id=kwargs.get('user_id'))
+        owner = request.user
+        data = get_object_or_404(UserFollowing, following=follow, owner=owner)
+        data.delete()
         return Response({}, status=202)

@@ -47,18 +47,7 @@
                         <div class="col-md-1">
                         </div>
                         <div class="col-md-10">
-                                <div class="mb-2">
-                                {% if likes %}
-                                    {% for like in likes %}
-                                        {% if like.likebool == True %}
-                                            <a href="{% url 'blog:likearticle' instance.id%}" class="btn btn-primary btn-sm">LIKED &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
-                                        {% else %}
-                                            <a href="{% url 'blog:likearticle' instance.id%}" class="btn btn-outline-primary btn-sm">LIKE &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    <a href="{% url 'blog:likearticle' instance.id%}" class="btn btn-outline-primary btn-sm">LIKE &nbsp<span class="badge badge-light">{{totallikes}}</span></a>
-                                {% endif %}
+                                <div class="mb-2" id="like_button">
                                 </div>
                                 <form method="POST" id="addComment" name="addComment" action="{% url 'endpoint:drfcommentpost' instance.id%}" novalidate>
                                     {% csrf_token %}
@@ -132,6 +121,56 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-outline-primary" form="deleteComment">Confirm</button>
+                <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="show_users" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">View Likers</h4>
+            </div>
+            <div class="modal-body" id="show_user_like">
+            </div>
+            <div class="modal-footer">
+                <button id="dismiss_show_users" type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit_article" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Article</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editArticle" class="article-form" method="POST">
+                
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    {% comment %} <div class="form-group">
+                        <label for="image" class="col-form-label">Image:</label>
+                        <input type="file" class="form-control" id="image">
+                    </div> {% endcomment %}
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-primary" form="editArticle">Confirm</button>
                 <button id="dismiss" type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
