@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block home %}
+    <a href="{% url 'blog:drfhome' %}" class="btn btn-outline-secondary">Home</a>
+{% endblock %}
+
+{% block switch %}
+    <a href={% url 'users:login' %} class="btn btn-outline-secondary">Login</a>
+    &nbsp
+    <a href={% url 'users:resetpass' %} class="btn btn-outline-danger">Forgot Password</a>
+{% endblock%}
+
+{% block content %}
+    <div class="container">
+        <div>
+            <form method="POST" id="registerForm" name="registerForm" novalidate>
+            {% csrf_token %}
+                <div class="form-group">
+                    <label for="email" class="col-form-label">email:</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-form-label">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="password2" class="col-form-label">Confirm Password:</label>
+                    <input type="password" class="form-control" id="password2" name="password2">
+                </div>
+            </form>
+            <div class="float-right">
+                <button type="submit" class="btn btn-outline-dark" form="registerForm">Register</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/register.js' %}"></script>
+{% endblock %}

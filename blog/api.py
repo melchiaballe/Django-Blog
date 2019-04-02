@@ -12,21 +12,18 @@ from users.models import User
 
 from rest_framework import generics
 from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer, FollowSerializer
+from users.serializers import UserRegisterSerializer, UserSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 #TESTING
-#from rest_framework.pagination import PageNumberPagination
-from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 
     # article_list = Article.objects.all().order_by('-date_published')
     # paginator = Paginator(article_list, 10)
     # page = request.GET.get('page')
     # form = paginator.get_page(page)
-
-
-from users.serializers import UserSerializer
 
 # class StandardResultsSetPagination(PageNumberPagination):
 #     page_size = 10
@@ -35,7 +32,7 @@ from users.serializers import UserSerializer
 class NewArticleViewSet(viewsets.ViewSet):
 
     def create_article(self, request, **kwargs):
-        article = Article.objects.all()
+        import pdb; pdb.set_trace()
         user = request.user
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
@@ -45,7 +42,7 @@ class NewArticleViewSet(viewsets.ViewSet):
     
     def list_articles(self, request, **kwargs):
         articles =  Article.objects.all()
-        #pagination_class = StandardResultsSetPagination
+        pagination_class = LimitOffsetPagination
         # paginator = Paginator(articles, 10)
         # page = request.GET.get('page')
         # form = paginator.get_page(page)
@@ -136,10 +133,11 @@ class CommentViewSet(viewsets.ViewSet):
 class UserViewSet(viewsets.ViewSet):
     
     def create_user(self, request, **kwargs):
+        import pdb; pdb.set_trace()
         data = request.data
-        serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            data = serializer.save()
+        serializer = UserRegisterSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            data = serializer.save(commit=False)    
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
     
@@ -154,7 +152,8 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=200)
     
     def update_user(self, request, **kwargs):
-        instance = get_object_or_404(User, id=kwargs.get('user_id'))
+        import pdb; pdb.set_trace()
+        instance = get_object_or_404(User, id=request.user.id)
         data = request.data
         serializer = UserSerializer(instance, data=data)
         if serializer.is_valid():

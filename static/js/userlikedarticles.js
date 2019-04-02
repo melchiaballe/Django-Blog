@@ -11,7 +11,7 @@ $(document).ready(function() {
     })
 
     function listLikedArticles(data){
-        
+        var name = getName(data)
         var total_likes = getTotalLikes(data.article.id)
         var total_comments = getTotalComments(data.article.id)
 
@@ -20,7 +20,7 @@ $(document).ready(function() {
         +        "<div><h2><b>" 
         +            data.article.title
         +            "</b></h2> <p><b> Author: </b>"
-        +            "<a href=\"user/article/"+data.owner.id+"\">"
+        +            "<a href=\""+base_url +"/drf/user/article/"+data.owner.id+"\">"
         +               name
         +            "</a>"
         +        "</p></div>"
@@ -48,5 +48,18 @@ $(document).ready(function() {
         $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
             $('#total_likes'+article_id).html(data)
         })
+    }
+
+    function getName(article){
+        var name;
+        
+        if(article.owner.firstname) {
+            name = article.owner.firstname + " " + article.owner.lastname;
+        }
+        else
+        {
+            name = article.owner.email;
+        }
+        return name;
     }
 })

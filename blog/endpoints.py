@@ -14,19 +14,12 @@ urlpatterns = [
     path('article/featured', NewArticleViewSet.as_view({'get': 'list_featured_articles'}), name = "drflistfeaturedarticle"),
     #get article details
     path('article/details/<int:article_id>', NewArticleViewSet.as_view({'get': 'article_details'}), name = "drfarticledetails"),
-    #get list of user and create user
-    path('user', UserViewSet.as_view({'get': 'list_user','post': 'create_user'}), name = "drfuserlist"),
-    #get user details
-    path('user/<int:user_id>/', UserViewSet.as_view({'get': 'user_details'}), name = "drfuserdetails"),
     #get all comment
     path('comment', CommentViewSet.as_view({'get': 'list_comments','post': 'create_comment'}), name = "drfcommentlist"),
     #create comment
     path('<int:article_id>/comment', CommentViewSet.as_view({'post': 'create_comment'}), name = "drfcommentpost"),
     #comment details
     path('comment/details/<int:comment_id>/', CommentViewSet.as_view({'get': 'comment_details'}), name = "drfcommentdetails"),
-
-    #-----------------------------------------------------------------------------------------------------------------------------------------
-    #LIKES
     #get all likes
     path('like', LikeViewSet.as_view({'get': 'list_like'}), name = "drflistlikes"),
     #get like with like id
@@ -41,8 +34,6 @@ urlpatterns = [
     path('article/<int:article_id>/total/comments', CommentViewSet.as_view({'get': 'total_comments_article'}), name = "drftotalcommentsperarticle"),
     #likes per user
     path('article/user/<int:user_id>/likes', LikeViewSet.as_view({'get': 'list_user_liked_article'}), name = "drflikesperuser"),
-    #-----------------------------------------------------------------------------------------------------------------------------------------
-    # FOLLOWS
     #get all follow
     path('follow', FollowViewSet.as_view({'get': 'list_follow'})),
     #get all user following
@@ -59,19 +50,26 @@ urlpatterns = [
     path('user/total/following', FollowViewSet.as_view({'get': 'total_user_following'})),
     #total follower
     path('user/total/follower', FollowViewSet.as_view({'get': 'total_user_follower'})),
+
     #-----------------------------------------------------------------------------------------------------------------------------------------
-    
+    #update user
+    path('user/update', UserViewSet.as_view({'post': 'update_user'}), name = "drfupdateuser"),
+    #get list of user and create user
+    path('user', UserViewSet.as_view({'get': 'list_user','post': 'create_user'}), name = "drfuserlist"),
+    #get user details
+    path('user/<int:user_id>/', UserViewSet.as_view({'get': 'user_details'}), name = "drfuserdetails"),
+    #-----------------------------------------------------------------------------------------------------------------------------------------
+
     #comments per article
     path('article/<int:article_id>/comments', CommentViewSet.as_view({'get': 'list_comments_article'}), name = "drfcommentperarticle"),
     #article per user
     path('article/user/<int:user_id>', NewArticleViewSet.as_view({'get': 'list_user_article'}), name = "drfarticleperuser"),
 
     #Execute Create
-    path('user', UserViewSet.as_view({'post': 'create_user'}), name = "drfuser"),
+    # path('user', UserViewSet.as_view({'post': 'create_user'}), name = "drfuser"),
 
     #Execute Update
     path('article/update/<int:article_id>', NewArticleViewSet.as_view({'post': 'update_article'}), name = "drfupdatearticle"),
-    path('user/update/<int:user_id>', UserViewSet.as_view({'post': 'update_user'}), name = "drfupdateuser"),
     path('comment/update/<int:comment_id>', CommentViewSet.as_view({'post': 'update_comment'}), name = "drfupdatecomment"),
 
     #Execute Delete

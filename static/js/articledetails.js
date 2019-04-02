@@ -293,13 +293,7 @@ $(document).ready(function(){
         }
         return name;
     }
-    //
-    //
-    //
-    //
-    //
-    //
-    // 
+
     function enableEdit(data){
         var edit = "";
         if(data.owner.id == user_id)

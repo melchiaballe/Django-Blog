@@ -27,18 +27,68 @@ $(document).ready(function(){
         console.log("-------------------------------------------")
         //create article
         var dt = $('#date').val(new Date($.now()));
+
+        var file_data = $('#article_image').prop('files')[0];
+        var title = $('#title').val();
+        var description = $('#description').val();
+        
+        var form_data = new FormData();
+
+        console.log(file_data)
+        form_data.append('title', title);
+        form_data.append('description', description);
+        form_data.append('article_image', file_data);
+        console.log(form_data);
+
+        var csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
         var url = $(this).attr('action');
+
         var jqhr = $.ajax({
                 url:url,
                 method:$(this).attr('method'),
-                data: $(this).serialize()
+                processData: false,
+                contentType: false,
+                data: form_data,
             }).done(function(data){
                 var article = data;
-                articleTemplate(article)          
+                articleTemplate(article)  
+                $('#addModal').modal('hide');
+                clearUserInputFields();        
             }).errors(function(error) {
                 console.log(error, 'error');
             });
     });
+
+    // $('.article-form').on('submit', function(event) {
+    //     event.preventDefault();
+    //     console.log("-------------------------------------------")
+    //     //create article
+    //     var dt = $('#date').val(new Date($.now()));
+
+    //     var url = $(this).attr('action');
+    //     console.log($(this));
+    //     var jqhr = $.ajax({
+    //             url:url,
+    //             method:$(this).attr('method'),
+    //             data: $(this).serialize(),
+    //         }).done(function(data){
+    //             var article = data;
+    //             articleTemplate(article)  
+    //             $('#addModal').modal('hide');
+    //             clearUserInputFields();        
+    //         }).errors(function(error) {
+    //             console.log(error, 'error');
+    //         });
+    // });
 
     function articleTemplate(article) {
         var name = getName(article);
@@ -65,7 +115,6 @@ $(document).ready(function(){
             +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
         $('#articles').prepend(template);
-        $('#addModal').modal('hide');
     }
 
     function jumbotronTemplate(article) {
@@ -134,6 +183,13 @@ $(document).ready(function(){
         $('#featuredthumbnail').prepend(template);
     }
 
+    function clearUserInputFields(){
+        
+        $('#title').val('');
+        $('#description').val('');
+        $('#article_image').val('');
+    }
+
     function getName(article){
         var name;
         
@@ -182,4 +238,26 @@ $(document).ready(function(){
             $('#thumbnail_total_comments'+article_id).html(data)
         })
     }
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
 });
