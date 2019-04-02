@@ -8,7 +8,8 @@ from .views import (
     ArticleDetailsTemplateView,
     UserArticleLikesTemplateView,
     EditUserTemplateView,
-    RegisterUserTemplateView)
+    RegisterUserTemplateView,
+    ChangePassUserTemplateView)
 from .api import NewArticleViewSet, UserViewSet, CommentViewSet, LikeViewSet
 
 app_name = 'blog'
@@ -28,8 +29,9 @@ urlpatterns = [
     path('accounts/follow/<int:user_id>', views.user_follow, name = "followuser"),
 
     path('drf/homepage', HomePageTemplateView.as_view(), name = "drfhome"),
-    path('drf/user/register/', RegisterUserTemplateView.as_view(), name = "drfuserregister"),
-    path('drf/user/edit/', EditUserTemplateView.as_view(), name = "drfuseredit"),
+    path('drf/user/register', RegisterUserTemplateView.as_view(), name = "drfuserregister"),
+    path('drf/user/edit', EditUserTemplateView.as_view(), name = "drfuseredit"),
+    path('drf/user/change/password', ChangePassUserTemplateView.as_view(), name = "drfchangepass"),
     path('drf/user/article/<int:user_id>', UserArticlesTemplateView.as_view(), name = "drfuserarticle"),
     path('drf/article/details/<int:article_id>', ArticleDetailsTemplateView.as_view(), name = "drfarticledetails"),
     path('drf/user/article/likes', UserArticleLikesTemplateView.as_view(), name = "drfuserlikearticle"),

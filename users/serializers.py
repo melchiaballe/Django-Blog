@@ -68,14 +68,27 @@ class UserSerializer(serializers.ModelSerializer):
 #     password2 = serializers.CharField(required=True)
 #     # password2 = serializers.CharField(validators=[validate_password2])
 
+# class UserRegisterSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = User
+#         fields = ('email', 'password')
+
+#     def create(self, validated_data):
+#         user = super().create(validated_data)
+#         user.set_password(validated_data['password'])
+#         user.save()
+#         return user
+
 class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = ('email', 'password')
 
     def create(self, validated_data):
-        user = super().create(validated_data)
+        user = super(UserRegisterSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user

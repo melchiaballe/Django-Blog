@@ -4,15 +4,23 @@ $(document).ready(function(){
 
     $('#registerForm').on('submit', function(event){
         event.preventDefault();
-        var url = base_url +"/api/user"
-        $.ajax({
-            url:url,
-            method:"post",
-            data:$(this).serialize(),
-        }).done(function(data){
-            alert("SUCCESS")
-        }).fail(function(errors){
-            console.log(errors)
-        })
+        var url = base_url +"/api/user";
+        var pass1 = $('#password').val();
+        var pass2 = $('#password2').val();
+
+        if(pass1 == pass2){
+            $.ajax({
+                url:url,
+                method:"post",
+                data:$(this).serialize(),
+            }).done(function(data){
+                alert("SUCCESS")
+            }).fail(function(errors){
+                console.log(errors)
+            })
+        }
+        else{
+            console.log("fail boiiiii")
+        }
     })
 })

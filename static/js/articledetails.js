@@ -207,6 +207,7 @@ $(document).ready(function(){
         }).done(function(data) {
             var comment = data;
             template = getComments(comment)
+            $('#content').val('')
             $('#comment_section').append(template)
         }).fail(function(data) {
             console.log(error, 'error');

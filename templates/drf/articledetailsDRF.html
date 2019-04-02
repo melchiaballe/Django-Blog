@@ -33,7 +33,7 @@
             <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Your Profile</a>
             <a class="dropdown-item" href="{% url 'blog:drfuserlikearticle' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'blog:drfuseredit' %}">Edit User Details</a>
-            <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
+            <a class="dropdown-item" href="{% url 'blog:drfchangepass' %}">Edit Password</a>
             <a class="dropdown-item" href="{% url 'users:logout' %}" >Logout</a>
         </div>
     </div>

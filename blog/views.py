@@ -216,9 +216,20 @@ class UserArticleLikesTemplateView(TemplateView):
 class EditUserTemplateView(TemplateView):
     
     def get(self, request, **kwargs):
-        return render(request, "drf/edituserDRF.html")
+        if request.user.is_authenticated:
+            return render(request, "drf/edituserDRF.html")
+        else:
+            Http404("Invalid Access")
 
 class RegisterUserTemplateView(TemplateView):
     
     def get(self, request, **kwargs):
         return render(request, "drf/registerDRF.html")
+
+class ChangePassUserTemplateView(TemplateView):
+    
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            return render(request, "drf/changepasswordDRF.html")
+        else:
+            Http404("Invalid Access")

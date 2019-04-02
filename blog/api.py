@@ -136,8 +136,8 @@ class UserViewSet(viewsets.ViewSet):
         import pdb; pdb.set_trace()
         data = request.data
         serializer = UserRegisterSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            data = serializer.save(commit=False)    
+        if serializer.is_valid():
+            data = serializer.save()    
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
     
