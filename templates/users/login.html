@@ -4,6 +4,10 @@
 
 {% block title %}Login{% endblock %}
 
+{% block home %}
+    <a href="{% url 'blog:drfhome' %}" class="btn btn-outline-secondary">Home</a>
+{% endblock %}
+
 {% block switch %}
     <a href={% url 'users:register' %} class="btn btn-outline-secondary">Register</a>
     &nbsp

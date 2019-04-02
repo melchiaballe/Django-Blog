@@ -13,18 +13,22 @@ $(document).ready(function(){
             else{
                 $('#follow_user').html("<button id=\"follow_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+data+"\" ><b>Follow Me</b></button>");
             }
+            $('#follow_container').html("<button id=\"following_btn\" class=\"btn btn-outline-info btn-sm\" style=\"margin-right:4px\" data-toggle=\"modal\" data-target=\"#following_modal\">FOLLOWING &nbsp<span id=\"following_count\" class=\"badge badge-light\"></span></button>" +
+            "<button id=\"follower_btn\" class=\"btn btn-outline-info btn-sm\" data-toggle=\"modal\" data-target=\"#follower_modal\">FOLLOWERS &nbsp<span id=\"follower_count\" class=\"badge badge-light\"></span></button>");
+            getTotalFollowing(user_id);
+            getTotalFollower(user_id);
 
         });
     }
     else{
         $('#follow_container').html("<button id=\"following_btn\" class=\"btn btn-outline-info btn-sm\" style=\"margin-right:4px\" data-toggle=\"modal\" data-target=\"#following_modal\">FOLLOWING &nbsp<span id=\"following_count\" class=\"badge badge-light\"></span></button>" +
         "<button id=\"follower_btn\" class=\"btn btn-outline-info btn-sm\" data-toggle=\"modal\" data-target=\"#follower_modal\">FOLLOWERS &nbsp<span id=\"follower_count\" class=\"badge badge-light\"></span></button>");
-        getTotalFollowing();
-        getTotalFollower();
+        getTotalFollowing(user_id);
+        getTotalFollower(user_id);
     }
 
     $(document).on('click', '#following_btn', function(event){
-        var url = base_url+"/api/user/following";
+        var url = base_url+"/api/user/"+user_id+"/following";
         $.ajax({
             url:url,
             method:"get",
@@ -33,13 +37,13 @@ $(document).ready(function(){
                 template = showfollowing(e);
                 $('#following_base').append(template);
             })
-        }).errors(function(errors){
+        }).fail(function(errors){
             console.log(errors);
         })
     })
 
     $(document).on('click', '#follower_btn', function(event){
-        var url = base_url+"/api/user/followers";
+        var url = base_url+"/api/user/"+user_id+"/followers";
         $.ajax({
             url:url,
             method:"get",
@@ -48,7 +52,7 @@ $(document).ready(function(){
                 template = showfollower(e)
                 $('#follower_base').append(template)
             })
-        }).errors(function(errors){
+        }).fail(function(errors){
             console.log(errors);
         })
     })
@@ -81,7 +85,7 @@ $(document).ready(function(){
                 method:"post",
             }).done(function(data) {
                 $('#follow_user').html("<button id=\"follow_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+!followbool+"\" ><b>Follow Me</b></button>");
-            }).errors(function(errors){
+            }).fail(function(errors){
                 console.log(errors)
             });
         }
@@ -95,7 +99,7 @@ $(document).ready(function(){
                 },
             }).done(function(data) {
                 $('#follow_user').html("<button id=\"follow_btn\" class=\"btn btn-primary btn-sm\" value=\""+!followbool+"\" ><b>Followed</b></button>");
-            }).errors(function(errors){
+            }).fail(function(errors){
                 console.log(errors)
             });
         }
@@ -117,9 +121,13 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            $('#display_default').html(
+                "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
+                +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
+            )
             $("#title").val(data.title)
             $("#description").val(data.description)
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error)
         })
     })
@@ -129,15 +137,44 @@ $(document).ready(function(){
         $("#delete_article_id").val( article_id );
     })
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
     $('#editArticle').on('submit', function(event){
         event.preventDefault();
         article_id = $('#edit_article_id').val();
+
+        var file_data = $('#article_image').prop('files')[0];
+        var title = $('#title').val();
+        var description = $('#description').val();
+
+        var form_data = new FormData();
+
+        if(file_data == undefined){
+            form_data.append('title', title);
+            form_data.append('description', description);
+        }
+        else{
+            form_data.append('title', title);
+            form_data.append('description', description);
+            form_data.append('article_image', file_data);
+        }
+
+        var csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
 
         url =  base_url+"/api/article/update/"+article_id;
         $.ajax({
             url:url,
             method:$(this).attr('method'),
-            data: $(this).serialize()
+            processData: false,
+            contentType: false,
+            data: form_data,
         }).done(function(data){
             $("#article_title"+article_id).html(data.title);
             $("#article_description"+article_id).html(
@@ -147,10 +184,11 @@ $(document).ready(function(){
                 +   "<b> Continue Reaing</b></a></p>"
             );
             $('#edit_article').modal('hide');
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error, 'error')
         })
     })
+    //---------------------------------------------------------------------------------------------------------------------------------------
 
     $('#deleteArticle').on('submit', function(event){
         event.preventDefault();
@@ -164,7 +202,7 @@ $(document).ready(function(){
         }).done(function(){
             $("#article"+article_id).remove();
             $('#delete_article').modal('hide');
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error, 'error')
         })
     })
@@ -290,8 +328,8 @@ $(document).ready(function(){
         return img
     }
 
-    function getTotalFollowing(){
-        $.get(base_url +'/api/user/total/following').done(function(data) {
+    function getTotalFollowing(owner_id){
+        $.get(base_url +'/api/user/'+owner_id+'/total/following').done(function(data) {
             $('#following_count').html(data)
         })
     }
@@ -318,8 +356,8 @@ $(document).ready(function(){
         return template;
     }
 
-    function getTotalFollower(){
-        $.get(base_url +'/api/user/total/follower').done(function(data) {
+    function getTotalFollower(owner_id){
+        $.get(base_url +'/api/user/'+owner_id+'/total/follower').done(function(data) {
             $('#follower_count').html(data)
         })
     }

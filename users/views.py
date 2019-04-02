@@ -41,11 +41,13 @@ class LoginView(TemplateView):
             user = form.auth(request)
             if user is not None:
                 login(request, user)
-                return redirect('blog:homepage')
+                return redirect('blog:drfhome')
             else:
                 form = UserLoginForm(request.POST)
                 form.add_error(None, "Invalid User Entry")
                 return render(request, 'users/login.html', {'form':form})
+        else:
+            return render(request, 'users/login.html', {'form':form})
 
 class RegisterUserView(TemplateView):
 
@@ -60,7 +62,7 @@ class RegisterUserView(TemplateView):
             user = authenticate(email=user.email, password=form.cleaned_data.get('password'))
             if user is not None:
                 login(request, user)
-                return redirect('users:edituser')
+                return redirect('blog:drfuseredit')
         else:
             form = UserRegForm(request.POST)
         return render(request, 'users/register.html', {'form': form})

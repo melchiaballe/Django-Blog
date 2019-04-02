@@ -40,7 +40,7 @@ $(document).ready(function(){
                 template = showLikes(e);
                 $('#show_user_like').append(template)
             })
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error)
         })
     })
@@ -70,7 +70,7 @@ $(document).ready(function(){
                 $("#show_user_like").empty();
                 //get total likes
                 getTotalLikes()
-            }).errors(function(error){
+            }).fail(function(error){
                 console.log(error);
             })
         }
@@ -88,7 +88,7 @@ $(document).ready(function(){
                 $("#show_user_like").empty();
                 //get total likes
                 getTotalLikes()
-            }).errors(function(error){
+            }).fail(function(error){
                 console.log(error);
             })
         }
@@ -105,7 +105,7 @@ $(document).ready(function(){
             method: 'get',
         }).done(function(data){
             $("#comment_content").val(data.content)
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error)
         })
     })
@@ -118,27 +118,58 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            $('#display_default').html(
+                "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
+                +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
+            )
             $("#title").val(data.title)
             $("#description").val(data.description)
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error)
         })
     })
-
     $('#editArticle').on('submit', function(event){
         event.preventDefault();
 
+        var file_data = $('#article_image').prop('files')[0];
+        var title = $('#title').val();
+        var description = $('#description').val();
+
+        var form_data = new FormData();
+
+        if(file_data == undefined){
+            form_data.append('title', title);
+            form_data.append('description', description);
+        }
+        else{
+            form_data.append('title', title);
+            form_data.append('description', description);
+            form_data.append('article_image', file_data);
+        }
+
+        var csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        
         url =  base_url+"/api/article/update/"+article_id;
         $.ajax({
             url:url,
             method:$(this).attr('method'),
-            data: $(this).serialize()
+            processData: false,
+            contentType: false,
+            data: form_data,
         }).done(function(data){
             $("#article_title").html(data.title);
-            console.log(data.description)
             $("#article_description").html(data.description);
+            $("#article_img").attr('src', data.article_image)
             $('#edit_article').modal('hide');
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error, 'error')
         })
     })
@@ -160,7 +191,7 @@ $(document).ready(function(){
         }).done(function(data){
             $('#comment_content'+data.id).html("&nbsp"+data.content)
             $('#edit_comment').modal('hide');
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error, 'error')
         })
     })
@@ -177,7 +208,7 @@ $(document).ready(function(){
             var comment = data;
             template = getComments(comment)
             $('#comment_section').append(template)
-        }).errors(function(data) {
+        }).fail(function(data) {
             console.log(error, 'error');
         })
     })
@@ -194,7 +225,7 @@ $(document).ready(function(){
         }).done(function(){
             $("#comment"+comment_id).remove();
             $('#delete_comment').modal('hide');
-        }).errors(function(error){
+        }).fail(function(error){
             console.log(error, 'error')
         })
     })
@@ -307,7 +338,7 @@ $(document).ready(function(){
         var img = "";
         if(data.article_image)
         {
-            img = "<img class=\"img-responsive\" src=\""+data.article_image+"\" width=\"600\" height=\"320\"></img>";
+            img = "<img id=\"article_img\" class=\"img-responsive\" src=\""+data.article_image+"\" width=\"600\" height=\"320\"></img>";
         }
         return img
     }

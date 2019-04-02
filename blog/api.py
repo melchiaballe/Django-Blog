@@ -152,7 +152,6 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=200)
     
     def update_user(self, request, **kwargs):
-        import pdb; pdb.set_trace()
         instance = get_object_or_404(User, id=request.user.id)
         data = request.data
         serializer = UserSerializer(instance, data=data)
@@ -225,30 +224,33 @@ class FollowViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=200)
     
     def user_follows_list(self, request, **kwargs):
-        user = UserFollowing.objects.filter(owner=request.user)
+        user = UserFollowing.objects.filter(owner=kwargs.get('user_id'))
+        serializer = FollowSerializer(user, many=True)
+        return Response(serializer.data, status=200)
+    
+    def user_followers_list(self, request, **kwargs):
+        user = UserFollowing.objects.filter(following=kwargs.get('user_id'))
         serializer = FollowSerializer(user, many=True)
         return Response(serializer.data, status=200)
         
     def total_user_following(self, request, **kwargs):
-        followingtotal = UserFollowing.objects.filter(owner=request.user).count()
+        followingtotal = UserFollowing.objects.filter(owner=kwargs.get('user_id')).count()
         return Response(followingtotal, status=200)
 
     def total_user_follower(self, request, **kwargs):
-        followertotal = UserFollowing.objects.filter(following=request.user).count()
-        return Response(followertotal, status=200)
-    
-    def user_followers_list(self, request, **kwargs):
-        user = UserFollowing.objects.filter(following=request.user)
-        serializer = FollowSerializer(user, many=True)
-        return Response(serializer.data, status=200)        
+        followertotal = UserFollowing.objects.filter(following=kwargs.get('user_id')).count()
+        return Response(followertotal, status=200)  
 
     def owner_follows_user(self, request, **kwargs):
         user = get_object_or_404(User, id=kwargs.get('user_id'))
-        userfollow = UserFollowing.objects.filter(following = user, followbool=True, owner=request.user)
-        if not userfollow:
-            returnbool = False
+        if request.user.is_authenticated:
+            userfollow = UserFollowing.objects.filter(following = user, followbool=True, owner=request.user)
+            if not userfollow:
+                returnbool = False
+            else:
+                returnbool = True
         else:
-            returnbool = True
+            returnbool = False
         return Response(returnbool, status=200)
 
     def create_follow(self, request, **kwargs):

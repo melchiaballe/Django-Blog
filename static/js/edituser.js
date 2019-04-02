@@ -4,7 +4,6 @@ $(document).ready(function(){
     var user_id = $('#user_id').val();
 
     $.get(base_url+'/api/user/'+user_id).done(function(data){
-        console.log(data);
         $('#email').val(data.email);
         $('#firstname').val(data.firstname);
         $('#lastname').val(data.lastname);
@@ -22,11 +21,19 @@ $(document).ready(function(){
 
         var form_data = new FormData();
 
-        form_data.append('email', email);
-        form_data.append('firstname', firstname);
-        form_data.append('lastname', lastname);
-        form_data.append('about_me', about_me);
-        form_data.append('avatar', file_data);
+        if(file_data == undefined){
+            form_data.append('email', email);
+            form_data.append('firstname', firstname);
+            form_data.append('lastname', lastname);
+            form_data.append('about_me', about_me);
+        }
+        else{
+            form_data.append('email', email);
+            form_data.append('firstname', firstname);
+            form_data.append('lastname', lastname);
+            form_data.append('about_me', about_me);
+            form_data.append('avatar', file_data);
+        }
 
         var csrftoken = getCookie('csrftoken');
 
@@ -46,30 +53,18 @@ $(document).ready(function(){
             contentType: false,
             data:form_data,
         }).done(function(data) {
+            console.log(data)
+            $('#display_default').html(
+                "<img src=\""+data.avatar+"\" width=\"50\" height=\"50\"></img>"
+                +"<a href=\"http://localhost:8000"+data.avatar+"\">"+data.avatar+"</a>"
+            )
+            $('#profile_picture').attr("src", data.avatar)
             $('#btn_name').html(getName(data))
-            alert("EDIT SUCCESS");
             $('#editModal').modal('hide');
-        }).error(function(errors){
+        }).fail(function(errors){
             console.log(errors);
         })
     })
-
-    // $('#updateUserForm').on('submit', function(event){
-    //     event.preventDefault();
-        
-    //     var url = base_url +"/api/user/update"
-    //     $.ajax({
-    //         url:url,
-    //         method:'post',
-    //         data:$(this).serialize(),
-    //     }).done(function(data) {
-    //         $('#btn_name').html(getName(data))
-    //         alert("EDIT SUCCESS");
-    //         $('#editModal').modal('hide');
-    //     }).error(function(errors){
-    //         console.log(errors);
-    //     })
-    // })
 
 
     function getName(owner){

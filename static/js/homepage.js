@@ -34,11 +34,19 @@ $(document).ready(function(){
         
         var form_data = new FormData();
 
-        console.log(file_data)
-        form_data.append('title', title);
-        form_data.append('description', description);
+
+        if(file_data == undefined){
+            form_data.append('title', title);
+            form_data.append('description', description);
+        }
+        else{
+            form_data.append('title', title);
+            form_data.append('description', description);
+            form_data.append('article_image', file_data);
+        }
+
+
         form_data.append('article_image', file_data);
-        console.log(form_data);
 
         var csrftoken = getCookie('csrftoken');
 
@@ -63,32 +71,10 @@ $(document).ready(function(){
                 articleTemplate(article)  
                 $('#addModal').modal('hide');
                 clearUserInputFields();        
-            }).errors(function(error) {
-                console.log(error, 'error');
+            }).fail(function(error) {
+                console.log(error);
             });
     });
-
-    // $('.article-form').on('submit', function(event) {
-    //     event.preventDefault();
-    //     console.log("-------------------------------------------")
-    //     //create article
-    //     var dt = $('#date').val(new Date($.now()));
-
-    //     var url = $(this).attr('action');
-    //     console.log($(this));
-    //     var jqhr = $.ajax({
-    //             url:url,
-    //             method:$(this).attr('method'),
-    //             data: $(this).serialize(),
-    //         }).done(function(data){
-    //             var article = data;
-    //             articleTemplate(article)  
-    //             $('#addModal').modal('hide');
-    //             clearUserInputFields();        
-    //         }).errors(function(error) {
-    //             console.log(error, 'error');
-    //         });
-    // });
 
     function articleTemplate(article) {
         var name = getName(article);

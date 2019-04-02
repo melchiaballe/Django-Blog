@@ -9,6 +9,17 @@
 {% endblock %}
 
 {% block switch %}
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-group ">
+            <input type="text" class="form-control" placeholder="search" aria-label="search" >
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+            </div>
+        </div>
+    </form>
+    &nbsp
     <div class="btn-group">
         <button id="btn_name" name="btn_name" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if request.user.firstname %}
@@ -18,7 +29,7 @@
             {% endif %}
         </button>
         <div class="dropdown-menu ">
-            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Your Profile</a>
             <a class="dropdown-item" href="{% url 'blog:drfuserlikearticle' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'blog:drfuseredit' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
@@ -26,7 +37,8 @@
         </div>
     </div>
     &nbsp
-    <img src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+    <img id="profile_picture" src="{{ request.user.avatar.url }}" width="40" height="40"></img>
+    {% endif %}
 {% endblock%}
 
 {% block content %}
@@ -35,6 +47,10 @@
         <div>
             <form method="POST" id="updateUserForm" name="updateUserForm" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
+                <div id="display_default">
+                    <img src="{{ request.user.avatar.url }}" width="50" height="50"></img>
+                    <a href="http://localhost:8000{{request.user.avatar.url}}">{{request.user.avatar.url}}</a>
+                </div>
                 <div class="form-group">
                     <label for="avatar" class="col-form-label">Avatar:</label>
                     <input type="file" class="form-control" id="avatar" name="avatar">

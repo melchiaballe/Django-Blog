@@ -10,12 +10,15 @@
 
 {% block switch %}
     {% if user.is_authenticated %}
-    <div class="input-group ">
-        <input type="text" class="form-control" placeholder="search" aria-label="search" >
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-group ">
+            <input type="text" class="form-control" placeholder="search" aria-label="search" >
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+            </div>
         </div>
-    </div>
+    </form>
     &nbsp
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +29,7 @@
             {% endif %}
         </button>
         <div class="dropdown-menu ">
-            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Your Profile</a>
             <a class="dropdown-item" href="{% url 'blog:drfuserlikearticle' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'blog:drfuseredit' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>

@@ -43,11 +43,11 @@ from rest_framework.validators import UniqueTogetherValidator
 #            raise serializers.ValidationError("Passwords don't match")
 #        return password2
 
-def validate_email(email):
-    qs = User.objects.filter(email=email)
-    if qs.exists():
-        raise serializers.ValidationError("email is taken")
-    return email
+# def validate_email(email):
+#     qs = User.objects.filter(email=email)
+#     if qs.exists():
+#         raise serializers.ValidationError("email is taken")
+#     return email
 
 # def validate_password2(password, password2):
 
@@ -62,8 +62,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'firstname', 'lastname',
                   'about_me', 'avatar' )
 
-class UserRegisterSerializer(serializers.Serializer):
-    email = serializers.EmailField(validators=[validate_email])
-    password = serializers.CharField(required=True)
-    password2 = serializers.CharField(required=True)
-    # password2 = serializers.CharField(validators=[validate_password2])
+# class UserRegisterSerializer(serializers.Serializer):
+#     email = serializers.EmailField(validators=[validate_email])
+#     password = serializers.CharField(required=True)
+#     password2 = serializers.CharField(required=True)
+#     # password2 = serializers.CharField(validators=[validate_password2])
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

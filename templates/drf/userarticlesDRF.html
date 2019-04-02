@@ -10,12 +10,15 @@
 
 {% block switch %}
     {% if request.user.is_authenticated %}
-    <div class="input-group ">
-        <input type="text" class="form-control" placeholder="search" aria-label="search" >
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-group ">
+            <input type="text" class="form-control" placeholder="search" aria-label="search" >
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary btn-sm" type="button">search</button>
+            </div>
         </div>
-    </div>
+    </form>
     &nbsp
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +29,7 @@
             {% endif %}
         </button>
         <div class="dropdown-menu ">
-            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Published Articles</a>
+            <a class="dropdown-item" href="{% url 'blog:drfuserarticle' request.user.id%}">Your Profile</a>
             <a class="dropdown-item" href="{% url 'blog:drfuserlikearticle' %}" >Liked Articles</a>
             <a class="dropdown-item" href="{% url 'blog:drfuseredit' %}">Edit User Details</a>
             <a class="dropdown-item" href="{% url 'users:editpass' %}">Edit Password</a>
@@ -68,25 +71,13 @@
                         {% if request.user.is_authenticated %}
                             {% if request.user.id != user.id %}
                                 <div class="text-right" id="follow_user">
-                                {% comment %} {% if follow %}
-                                    {% for fllw in follow %}
-                                        {% if fllw.followbool == True %}
-                                            <a href = "{% url 'blog:followuser' user.id%}" class="btn btn-primary btn-sm" ><b>Followed</b></a>
-                                        {% else %}
-                                            <a href = "{% url 'blog:followuser' user.id%}" class="btn btn-outline-primary btn-sm" ><b>Follow Me</b></a>
-                                        {% endif %}      
-                                    {% endfor %}      
-                                {% else %}
-                                    <a href = "{% url 'blog:followuser' user.id%}" class="btn btn-outline-primary btn-sm" ><b>Follow Me</b></a>
-                                {% endif %}                {% endcomment %}
-                                </div>
-                                <br/>
-                            {% else %}
-                                <div id="follow_container">
                                 </div>
                                 <br/>
                             {% endif %}
                         {% endif %}
+                        <div id="follow_container">
+                        </div>
+                        <br/>
                         <img src="{{user.avatar.url}}" width="200px" height="200px">
                         <br/>
                         {% if user.firstname %}
@@ -119,16 +110,18 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="editArticle" method="POST">
+                <form id="editArticle" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
                     <div class="form-group">
                         <label for="title" class="col-form-label">Title:</label>
                         <input type="text" class="form-control" id="title" name="title">
                     </div>
-                    {% comment %} <div class="form-group">
-                        <label for="image" class="col-form-label">Image:</label>
-                        <input type="file" class="form-control" id="image">
-                    </div> {% endcomment %}
+                    <div id="display_default">
+                    </div>
+                    <div class="form-group">
+                        <label for="article_image" class="col-form-label">Image:</label>
+                        <input type="file" class="form-control" id="article_image">
+                    </div>
                     <div class="form-group">
                         <label for="description" class="col-form-label">Description:</label>
                         <textarea class="form-control" id="description" name="description"></textarea>

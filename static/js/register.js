@@ -11,8 +11,8 @@ $(document).ready(function(){
             data:$(this).serialize(),
         }).done(function(data){
             alert("SUCCESS")
-        }).error(function(errors){
-
+        }).fail(function(errors){
+            console.log(errors)
         })
     })
 })

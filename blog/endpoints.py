@@ -36,10 +36,12 @@ urlpatterns = [
     path('article/user/<int:user_id>/likes', LikeViewSet.as_view({'get': 'list_user_liked_article'}), name = "drflikesperuser"),
     #get all follow
     path('follow', FollowViewSet.as_view({'get': 'list_follow'})),
+
     #get all user following
-    path('user/following', FollowViewSet.as_view({'get': 'user_follows_list'})),
+    path('user/<int:user_id>/following', FollowViewSet.as_view({'get': 'user_follows_list'})),
     #get all user followers
-    path('user/followers', FollowViewSet.as_view({'get': 'user_followers_list'})),
+    path('user/<int:user_id>/followers', FollowViewSet.as_view({'get': 'user_followers_list'})),
+
     #owner followed user
     path('follows/user/<int:user_id>', FollowViewSet.as_view({'get': 'owner_follows_user'})),
     #create follow
@@ -47,9 +49,9 @@ urlpatterns = [
     #remove follow
     path('user/<int:user_id>/remove/follow', FollowViewSet.as_view({'post':'delete_follow'})),
     #total following
-    path('user/total/following', FollowViewSet.as_view({'get': 'total_user_following'})),
+    path('user/<int:user_id>/total/following', FollowViewSet.as_view({'get': 'total_user_following'})),
     #total follower
-    path('user/total/follower', FollowViewSet.as_view({'get': 'total_user_follower'})),
+    path('user/<int:user_id>/total/follower', FollowViewSet.as_view({'get': 'total_user_follower'})),
 
     #-----------------------------------------------------------------------------------------------------------------------------------------
     #update user
