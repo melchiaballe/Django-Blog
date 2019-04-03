@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Count
 
+from taggit.managers import TaggableManager
+
 # Create your models here.
 
 class Article(models.Model):
@@ -13,6 +15,8 @@ class Article(models.Model):
     article_image = models.ImageField(upload_to='articleImage/', null=True, blank=True)
     is_featured = models.BooleanField(default=False)
 
+    tags = TaggableManager()
+    
     def __str__(self):
         return self.title
 

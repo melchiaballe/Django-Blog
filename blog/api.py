@@ -12,9 +12,11 @@ from users.models import User
 
 from rest_framework import generics
 from .serializers import ArticleSerializer, CommentSerializer, LikeSerializer, FollowSerializer
-from users.serializers import UserRegisterSerializer, UserSerializer
+from users.serializers import UserRegisterSerializer, UserSerializer, ChangePasswordSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
+
+from django.db.models.functions import Lower
 
 #TESTING
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
@@ -32,7 +34,6 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 class NewArticleViewSet(viewsets.ViewSet):
 
     def create_article(self, request, **kwargs):
-        import pdb; pdb.set_trace()
         user = request.user
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
@@ -140,6 +141,22 @@ class UserViewSet(viewsets.ViewSet):
             data = serializer.save()    
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    def change_password_user(self, request, **kwargs):
+        if request.user.is_authenticated:
+            user = get_object_or_404(User, id=request.user.id)
+            serializer = ChangePasswordSerializer(data=request.data)
+            if serializer.is_valid():
+                old_password = serializer.data.get("old_password")
+                if not user.check_password(old_password):
+                    return Response({"old_password": ["Wrong password."]}, 
+                                    status=400)
+                user.set_password(serializer.data.get("new_password"))
+                user.save()
+                return Response(status=204)
+            return Response(serializer.errors, status=400)
+        else:
+            return Http404("Invalid Access")
     
     def list_user(self, request, **kwargs):
         user = User.objects.all()
@@ -269,3 +286,22 @@ class FollowViewSet(viewsets.ViewSet):
         data = get_object_or_404(UserFollowing, following=follow, owner=owner)
         data.delete()
         return Response({}, status=202)
+
+
+class SearchViewSet(viewsets.ViewSet):
+
+    def search_article(self, request, **kwargs):
+        context = request.GET.get('search')
+        article = Article.objects.filter(title__contains=context)
+        if(article):
+            serializer = ArticleSerializer(article, many=True)
+            return Response(serializer.data, status=202)
+        return Response({'error':'Does not exist'}, status=400)
+
+    def search_user(self, request, **kwargs):
+        context = request.GET.get('search')
+        user = User.objects.filter(firstname__contains=context)
+        if(user):
+            serializer = UserSerializer(user, many=True)
+            return Response(serializer.data, status=202)
+        return Response({'error':'Does not exist'}, status=400)

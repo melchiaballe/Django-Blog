@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'users',
     'widget_tweaks',
     'rest_framework',
+    'django_filters',
+    'taggit',
 ]
 
 AUTH_USER_MODEL = 'users.User'

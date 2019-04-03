@@ -3,11 +3,11 @@ from .models import Article, ArticleComments, ArticleLikes, UserFollowing
 from users.serializers import UserSerializer
 
 
-from rest_framework.pagination import PageNumberPagination
+# from rest_framework.pagination import PageNumberPagination
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 10
+# class StandardResultsSetPagination(PageNumberPagination):
+#     page_size = 10
+#     max_page_size = 10
 
 
 class ArticleSerializer(serializers.ModelSerializer):

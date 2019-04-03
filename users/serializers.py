@@ -1,6 +1,43 @@
 from rest_framework import serializers
 from .models import User
 from rest_framework.validators import UniqueTogetherValidator
+from django.contrib.auth.password_validation import validate_password
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'firstname', 'lastname',
+                  'about_me', 'avatar' )
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+
+    def validate_password(self, value):
+        validate_password(value, self.instance)
+        return value
+    
+    def create(self, validated_data):
+        user = super(UserRegisterSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
+
 
 # class UserSerializer(serializers.ModelSerializer):
 
@@ -55,13 +92,6 @@ from rest_framework.validators import UniqueTogetherValidator
 #         raise serializers.ValidationError("Passwords don't match")
 #     return password2
 
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id', 'email', 'firstname', 'lastname',
-                  'about_me', 'avatar' )
-
 # class UserRegisterSerializer(serializers.Serializer):
 #     email = serializers.EmailField(validators=[validate_email])
 #     password = serializers.CharField(required=True)
@@ -79,16 +109,3 @@ class UserSerializer(serializers.ModelSerializer):
 #         user.set_password(validated_data['password'])
 #         user.save()
 #         return user
-
-class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('email', 'password')
-
-    def create(self, validated_data):
-        user = super(UserRegisterSerializer, self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user

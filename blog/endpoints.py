@@ -2,7 +2,8 @@ from django.urls import path
 
 from . import views
 from .views import ArticleTemplateView, HomePageTemplateView
-from .api import NewArticleViewSet, UserViewSet, CommentViewSet, LikeViewSet, FollowViewSet
+from .api import NewArticleViewSet, UserViewSet, CommentViewSet, LikeViewSet, FollowViewSet, SearchViewSet
+# from .filter import ArticleList
 
 
 app_name = 'endpoint'
@@ -60,15 +61,14 @@ urlpatterns = [
     path('user', UserViewSet.as_view({'get': 'list_user','post': 'create_user'}), name = "drfuserlist"),
     #get user details
     path('user/<int:user_id>/', UserViewSet.as_view({'get': 'user_details'}), name = "drfuserdetails"),
+    #update user passsword
+    path('user/update/password', UserViewSet.as_view({'post': 'change_password_user'}), name = "drfchangepass"),
     #-----------------------------------------------------------------------------------------------------------------------------------------
 
     #comments per article
     path('article/<int:article_id>/comments', CommentViewSet.as_view({'get': 'list_comments_article'}), name = "drfcommentperarticle"),
     #article per user
     path('article/user/<int:user_id>', NewArticleViewSet.as_view({'get': 'list_user_article'}), name = "drfarticleperuser"),
-
-    #Execute Create
-    # path('user', UserViewSet.as_view({'post': 'create_user'}), name = "drfuser"),
 
     #Execute Update
     path('article/update/<int:article_id>', NewArticleViewSet.as_view({'post': 'update_article'}), name = "drfupdatearticle"),
@@ -78,5 +78,10 @@ urlpatterns = [
     path('article/<int:article_id>/delete', NewArticleViewSet.as_view({'post': 'delete_article'}), name = "drfarticledelete"),
     path('comment/<int:comment_id>/delete', CommentViewSet.as_view({'post': 'delete_comment'}), name = "drfcommentdelete"),
     path('article/<int:article_id>/like/delete', LikeViewSet.as_view({'post': 'delete_like'}), name = "drflikedelete"),
+
+
+    #Search
+    path('search/user/', SearchViewSet.as_view({'get': 'search_user'})),
+    path('search/article/', SearchViewSet.as_view({'get': 'search_article'})),
 
 ]

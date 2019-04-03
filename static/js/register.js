@@ -15,12 +15,13 @@ $(document).ready(function(){
                 data:$(this).serialize(),
             }).done(function(data){
                 alert("SUCCESS")
+                window.location.href = base_url+"/users/accounts/login";
             }).fail(function(errors){
                 console.log(errors)
             })
         }
         else{
-            console.log("fail boiiiii")
+            alert("PASSWORD DO NOT MATCH")
         }
     })
 })
