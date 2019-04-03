@@ -303,7 +303,7 @@ $(document).ready(function(){
         +            "&nbsp <i>Author:<a href=\""+base_url+"/drf/user/article/"+data.owner.id+"\"><b>"+name+"</b></a></i>"
         +            "<div>"
         +                "<p>&nbsp&nbsp"+jQuery.trim(data.description).substring(0, 50).split(" ").slice(0, -1).join(" ") + "..."
-        +                   "<a href=\"article/details/"+data.id+"\">"
+        +                   "<a href=\""+base_url+"/drf/article/details/"+data.id+"\">"
         +                       "<b> Continue reading</b>"
         +                   "</a>"+"</p>"
         +            "</div>"
@@ -390,9 +390,15 @@ $(document).ready(function(){
         name = getName(data);
         edit = enableEdit(data);
         img = hasImage(data);
+        tags = getTags(data.tags);
 
+        console.log(tags)
         var template = "<div align=\"center\">"
         +    "<h1 class=\"display-3\" id=\"article_title\">"+data.title+"</h1>"
+        +       "<div align=\"center\">"
+        +           tags
+        +       "</div>"
+        +       "<br/>"
         +    "<p>"
         +        "<b>Author:</b><a href=\""+base_url+"/drf/user/article/"+data.owner.id+"\">" + name + "</a>&nbsp"
         +        edit
@@ -404,6 +410,15 @@ $(document).ready(function(){
         +"</div>";
 
         $('#article_details').prepend(template)
+    }
+
+    function getTags(data){
+        console.log(data)
+        template=""
+        data.forEach(function(e){
+            template += "<button class=\"btn btn-outline-primary\">" + e + "</button> &nbsp"
+        });
+        return template
     }
 
     function enableEditDelete(data){

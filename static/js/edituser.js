@@ -135,7 +135,7 @@ $(document).ready(function(){
         +            "&nbsp <i>Author:<a href=\""+base_url+"/drf/user/article/"+data.owner.id+"\"><b>"+name+"</b></a></i>"
         +            "<div>"
         +                "<p>&nbsp&nbsp"+jQuery.trim(data.description).substring(0, 50).split(" ").slice(0, -1).join(" ") + "..."
-        +                   "<a href=\"article/details/"+data.id+"\">"
+        +                   "<a href=\""+base_url+"/drf/article/details/"+data.id+"\">"
         +                       "<b> Continue reading</b>"
         +                   "</a>"+"</p>"
         +            "</div>"

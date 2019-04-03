@@ -71,22 +71,21 @@ $(document).ready(function(){
         var file_data = $('#article_image').prop('files')[0];
         var title = $('#title').val();
         var description = $('#description').val();
-        
+        var tags = $('#tags').val();
         var form_data = new FormData();
 
 
         if(file_data == undefined){
             form_data.append('title', title);
             form_data.append('description', description);
+            form_data.append('tags', tags)
         }
         else{
             form_data.append('title', title);
             form_data.append('description', description);
             form_data.append('article_image', file_data);
+            form_data.append('tags', tags)
         }
-
-
-        form_data.append('article_image', file_data);
 
         var csrftoken = getCookie('csrftoken');
 
@@ -108,7 +107,8 @@ $(document).ready(function(){
                 data: form_data,
             }).done(function(data){
                 var article = data;
-                articleTemplate(article)  
+                console.log(article)
+                articleTemplate(article)
                 $('#addModal').modal('hide');
                 clearUserInputFields();        
             }).fail(function(error) {
@@ -214,6 +214,7 @@ $(document).ready(function(){
         $('#title').val('');
         $('#description').val('');
         $('#article_image').val('');
+        $('#tags').val('')
     }
 
     function getTotalLikes(article_id){

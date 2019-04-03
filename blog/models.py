@@ -15,8 +15,8 @@ class Article(models.Model):
     article_image = models.ImageField(upload_to='articleImage/', null=True, blank=True)
     is_featured = models.BooleanField(default=False)
 
-    tags = TaggableManager()
-    
+    tags = TaggableManager(blank=True)
+
     def __str__(self):
         return self.title
 
