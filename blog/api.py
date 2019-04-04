@@ -34,25 +34,24 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 class NewArticleViewSet(viewsets.ViewSet):
 
     def create_article(self, request, **kwargs):
-        import pdb; pdb.set_trace()
         user = request.user
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=user)
-            # serializer.save_m2m()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
     
     def list_articles(self, request, **kwargs):
-        articles =  Article.objects.all()
+        articles =  Article.objects.all().order_by('-date_published')
         p = PageNumberPagination()
         page = p.paginate_queryset(articles, request)
         serializer = ArticleSerializer(page, many=True)
-        import pdb; pdb.set_trace()
         results = {
-            'has_prev': p.get_previous_link(),
-            'page': p.page.number,
-            'has_next': p.get_next_link(),
+            'pagination':{'has_prev': p.get_previous_link(),
+                'page': p.page.number,
+                'count': p.page.paginator.count,
+                'total_pages': p.page.paginator.num_pages,
+                'has_next': p.get_next_link()},
             'results': serializer.data
         }
         return Response(results, status=200)

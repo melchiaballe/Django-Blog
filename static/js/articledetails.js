@@ -118,34 +118,44 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            console.log(data)
             $('#display_default').html(
                 "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
             )
             $("#title").val(data.title)
             $("#description").val(data.description)
+            tags = data.tags.join(" ");
+            $("#tags").val(tags)
         }).fail(function(error){
             console.log(error)
         })
     })
+    //
+    //
+    //========================================================================================================================================
+    //
+    //
     $('#editArticle').on('submit', function(event){
         event.preventDefault();
 
         var file_data = $('#article_image').prop('files')[0];
         var title = $('#title').val();
         var description = $('#description').val();
+        var tags = $('#tags').val();
 
         var form_data = new FormData();
 
-        if(file_data == undefined){
-            form_data.append('title', title);
-            form_data.append('description', description);
-        }
-        else{
-            form_data.append('title', title);
-            form_data.append('description', description);
+        if(file_data != undefined){
             form_data.append('article_image', file_data);
         }
+
+        if(tags != ""){
+            form_data.append('tags', tags)
+        }
+
+        form_data.append('title', title);
+        form_data.append('description', description);
 
         var csrftoken = getCookie('csrftoken');
 
@@ -165,6 +175,10 @@ $(document).ready(function(){
             contentType: false,
             data: form_data,
         }).done(function(data){
+            console.log(data)
+            $('#tags_div').empty()
+            template = getTags(data.tags)
+            $('#tags_div').append(template)
             $("#article_title").html(data.title);
             $("#article_description").html(data.description);
             $("#article_img").attr('src', data.article_image)
@@ -392,10 +406,9 @@ $(document).ready(function(){
         img = hasImage(data);
         tags = getTags(data.tags);
 
-        console.log(tags)
         var template = "<div align=\"center\">"
         +    "<h1 class=\"display-3\" id=\"article_title\">"+data.title+"</h1>"
-        +       "<div align=\"center\">"
+        +       "<div id=\"tags_div\" align=\"center\">"
         +           tags
         +       "</div>"
         +       "<br/>"
@@ -413,7 +426,6 @@ $(document).ready(function(){
     }
 
     function getTags(data){
-        console.log(data)
         template=""
         data.forEach(function(e){
             template += "<button class=\"btn btn-outline-primary\">" + e + "</button> &nbsp"

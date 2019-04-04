@@ -42,6 +42,35 @@ $(document).ready(function(){
         $("#search_base").empty();
     });
 
+    $("#pagination_form").on('submit', function(event){
+        event.preventDefault()
+        url = document.activeElement.getAttribute('value')
+
+        $.ajax({
+            url:url,
+            method:'get',
+        }).done(function(data){
+            $('#articles').empty();
+            $('#pagination_ul').empty()
+
+            data.results.forEach(function(e){
+                articleTemplate(e)
+            })
+            if(data.pagination.has_prev){
+                template = paginationHasPrev(data.pagination.has_prev)
+                $('#pagination_ul').append(template)
+            }
+            for(i=1; i <= data.pagination.total_pages; i++){
+                template = pagination(i)
+                $('#pagination_ul').append(template)
+            }
+            if(data.pagination.has_next){
+                template = paginationHasNext(data.pagination.has_next)
+                $('#pagination_ul').append(template)
+            }
+        })
+    })
+
     $.get(base_url +'/api/article/featured').done(function(data){
         var i;
         for (i = 0; i < data.length; i++) {
@@ -57,9 +86,21 @@ $(document).ready(function(){
     })
 
     $.get(base_url +'/api/article').done(function(data){
-        data.forEach(function(e){
+        data.results.forEach(function(e){
             articleTemplate(e)
         })
+        if(data.pagination.has_prev){
+            template = paginationHasPrev(data.pagination.has_prev)
+            $('#pagination_ul').append(template)
+        }
+        for(i=1; i <= data.pagination.total_pages; i++){
+            template = pagination(i)
+            $('#pagination_ul').append(template)
+        }
+        if(data.pagination.has_next){
+            template = paginationHasNext(data.pagination.has_next)
+            $('#pagination_ul').append(template)
+        }
     })
 
     $('.article-form').on('submit', function(event) {
@@ -74,19 +115,17 @@ $(document).ready(function(){
         var tags = $('#tags').val();
         var form_data = new FormData();
 
-
-        if(file_data == undefined){
-            form_data.append('title', title);
-            form_data.append('description', description);
-            form_data.append('tags', tags)
-        }
-        else{
-            form_data.append('title', title);
-            form_data.append('description', description);
+        if(file_data != undefined){
             form_data.append('article_image', file_data);
+        }
+
+        if(tags != ""){
             form_data.append('tags', tags)
         }
 
+        form_data.append('title', title);
+        form_data.append('description', description);
+            
         var csrftoken = getCookie('csrftoken');
 
         $.ajaxSetup({
@@ -115,6 +154,19 @@ $(document).ready(function(){
                 console.log(error);
             });
     });
+
+    function pagination(page){
+        var template = "<li class=\"page-item\"><button type=\"submit\" class=\"page-link\" value=\""+base_url+"/api/article?page="+page+"\">"+page+"</button></li>"
+        return template
+    }
+    function paginationHasPrev(has_prev){
+        var template = "<li class=\"page-item\"><button type=\"submit\" class=\"page-link\" value=\""+has_prev+"\">Prev</button></li>"
+        return template
+    }
+    function paginationHasNext(has_next){
+        var template = "<li class=\"page-item\"><button type=\"submit\" class=\"page-link\" value=\""+has_next+"\">Next</button></li>"
+        return template
+    }
 
     function articleTemplate(article) {
         var name = getName(article);

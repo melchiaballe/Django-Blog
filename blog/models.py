@@ -54,7 +54,7 @@ class ArticleLikes(models.Model):
 
 class UserFollowing(models.Model):
     followbool = models.BooleanField()
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'following', unique=True)
+    following = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'following', unique=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user')
     date_follow = models.DateTimeField(auto_now_add = True)
     date_modified = models.DateTimeField(auto_now = True)

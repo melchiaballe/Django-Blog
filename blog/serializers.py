@@ -8,19 +8,57 @@ from rest_framework.pagination import PageNumberPagination
 #     page_size = 10
 #     max_page_size = 10
 
+# class TagSerializerField(serializers.ListField):
+#     child = serializers.CharField()
+
+#     def to_representation(self, data):
+#         return data.values_list('name', flat=True)
+
+# class TagSerializer(serializers.ModelSerializer):
+#     tags = TagSerializerField()
+
+#     def create(self, validated_data):
+#         tags = validated_data.pop('tags')
+#         instance = super(TagSerializer, self).create(validated_data)
+#         instance.tags.set(*tags)
+#         return instance
+
 class TagSerializerField(serializers.ListField):
-    child = serializers.CharField()
+    def to_internal_value(self, data):
+        if type(data) is not list:
+            raise ("expected a list of data")
+        return data
 
-    def to_representation(self, data):
-        return data.values_list('name', flat=True)
-
+    def to_representation(self, obj):
+        if type(obj) is not list:
+            return [tag.name for tag in obj.all()]
+        return obj
+        
 class TagSerializer(serializers.ModelSerializer):
     tags = TagSerializerField()
 
     def create(self, validated_data):
-        tags = validated_data.pop('tags')
-        instance = super(TagSerializer, self).create(validated_data)
-        instance.tags.set(*tags)
+        if 'tags' in validated_data:
+            tags = validated_data.pop('tags')
+            tagCont = ''.join(str(e) for e in tags)
+            tagCont = tagCont.replace(',',' ')
+            tags = tagCont.split(" ")
+            instance = super(TagSerializer, self).create(validated_data)
+            instance.tags.set(*tags)
+        else:
+            instance = super(TagSerializer, self).create(validated_data)
+        return instance
+    
+    def update(self, instance, validated_data):
+        if 'tags' in validated_data:
+            tags = validated_data.pop('tags')
+            tagCont = ''.join(str(e) for e in tags)
+            tagCont = tagCont.replace(',',' ')
+            tags = tagCont.split(" ")
+            instance = super(TagSerializer, self).update(instance, validated_data)
+            instance.tags.set(*tags)
+        else:
+            instance = super(TagSerializer, self).update(instance, validated_data)
         return instance
 
 class ArticleSerializer(TagSerializer, serializers.ModelSerializer):

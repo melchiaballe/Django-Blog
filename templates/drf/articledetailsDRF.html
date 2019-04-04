@@ -182,6 +182,10 @@
                         <label for="description" class="col-form-label">Description:</label>
                         <textarea row="5" class="form-control" id="description" name="description"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="tags" class="col-form-label">Tags:</label>
+                        <input type="text" class="form-control" id="tags" name="tags">
+                    </div>
                     <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>
                 </form>
             </div>

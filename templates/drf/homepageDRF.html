@@ -112,8 +112,9 @@
                 <!-- PAGINATION PART -->
                 <!--########################################################################################################-->
                     <div align="center">
-                        <ul class="pagination justify-content-center">
-                            {% if form.has_previous %}
+                    <form id="pagination_form">
+                        <ul id="pagination_ul" class="pagination justify-content-center" >
+                            {% comment %} {% if form.has_previous %}
                                 <a class="page-link" href="?page={{ form.previous_page_number }}">previous</a>
                             {% endif %}
 
@@ -128,8 +129,9 @@
                             {% if form.has_next %}
                                 <a class="page-link" href="?page={{ form.next_page_number }}">next</a>
                             {% endif %}
-                            </li>
+                            </li> {% endcomment %}
                         </ul>
+                    </form>
                     </div>
                 </div>
         </div>
@@ -147,6 +149,8 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
+                <div id="errors">
+                </div>
                 <form id="addArticle" class="article-form" method="POST" action="{% url 'endpoint:drflistarticle' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                     <div class="form-group">

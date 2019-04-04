@@ -145,18 +145,20 @@ $(document).ready(function(){
         var file_data = $('#article_image').prop('files')[0];
         var title = $('#title').val();
         var description = $('#description').val();
+        var tags = $('#tags').val();
 
         var form_data = new FormData();
 
-        if(file_data == undefined){
-            form_data.append('title', title);
-            form_data.append('description', description);
-        }
-        else{
-            form_data.append('title', title);
-            form_data.append('description', description);
+        if(file_data != undefined){
             form_data.append('article_image', file_data);
         }
+
+        if(tags != ""){
+            form_data.append('tags', tags)
+        }
+
+        form_data.append('title', title);
+        form_data.append('description', description);
 
         var csrftoken = getCookie('csrftoken');
 
