@@ -18,16 +18,36 @@ $(document).ready(function(){
                 alert("DONE CHANGING")
                 $('#editModal').modal('hide')
                 window.location.href = base_url+"/drf/homepage";
-            }).fail(function(errors){
-                console.log(errors);
+            }).fail(function(error){
+                var err = error.responseJSON;
+                console.log(err)
+                if(err.old_password){
+                    $('#old_password').attr('class', 'form-control is-invalid')
+                    $('#invalid_old_password').html(err.old_password);
+                }
+                else{
+                    $('#old_password').attr('class', 'form-control is-valid')
+                    $('#invalid_old_password').empty();
+                }
+
+                if(err.new_password){
+                    $('#new_password').attr('class', 'form-control is-invalid')
+                    $('#confirm_new_password').attr('class', 'form-control is-invalid')
+                    newpass = err.new_password.join(" ");
+                    $('#invalid_new_password').html(newpass);
+                }else{
+                    $('#new_password').attr('class', 'form-control is-valid')
+                    $('#confirm_new_password').attr('class', 'form-control is-valid')
+                    $('#invalid_new_password').empty();
+                }
+
                 $('#editModal').modal('hide')
             })
         }
         else{
-            alert("NEW PASSWORD AND CONFIRM NEW PASSWORD DO NOT MATCH")
+            $('#new_password').attr('class', 'form-control is-invalid')
+            $('#confirm_new_password').attr('class', 'form-control is-invalid')
             $('#editModal').modal('hide')
-            // $('#new_password').attr('class', 'is-invalid')
-            // $('#confirm_new_password').attr('class', 'is-invalid')
         }
     })
 

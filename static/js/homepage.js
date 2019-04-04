@@ -145,7 +145,11 @@ $(document).ready(function(){
                 $('#addModal').modal('hide');
                 clearUserInputFields();        
             }).fail(function(error) {
-                console.log(error);
+                var err = error.responseJSON;
+                if(err.title){
+                    $('#title').attr('class', 'form-control is-invalid')
+                    $('#invalid_title').html(err.title)
+                }
             });
     });
 

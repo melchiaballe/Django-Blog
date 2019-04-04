@@ -60,8 +60,19 @@ $(document).ready(function(){
             $('#profile_picture').attr("src", data.avatar)
             $('#btn_name').html(getName(data))
             $('#editModal').modal('hide');
-        }).fail(function(errors){
-            console.log(errors);
+        }).fail(function(error){
+            var err = error.responseJSON;
+            if(err.email){
+                $('#email').attr('class', 'form-control is-invalid')
+                $('invalid_email').html(err.email)
+            }
+            else{
+                $('#email').attr('class', 'form-control is-valid')
+                $('invalid_email').empty()
+            }
+
+            $('#editModal').modal('hide');
+            console.log(err)
         })
     })
 

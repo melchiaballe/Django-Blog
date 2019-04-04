@@ -178,7 +178,11 @@ $(document).ready(function(){
             $("#article_img").attr('src', data.article_image)
             $('#edit_article').modal('hide');
         }).fail(function(error){
-            console.log(error)
+            var err = error.responseJSON;
+            if(err.title){
+                $('#title').attr('class', 'form-control is-invalid')
+                $('#invalid_title').html(err.title)
+            }
         })
     })
 

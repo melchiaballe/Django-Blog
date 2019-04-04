@@ -140,7 +140,6 @@ class CommentViewSet(viewsets.ViewSet):
 class UserViewSet(viewsets.ViewSet):
     
     def create_user(self, request, **kwargs):
-        import pdb; pdb.set_trace()
         data = request.data
         serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid():

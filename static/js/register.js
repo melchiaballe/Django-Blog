@@ -15,12 +15,28 @@ $(document).ready(function(){
             }).done(function(data){
                 alert("SUCCESS")
                 window.location.href = base_url+"/users/accounts/login";
-            }).fail(function(errors){
-                console.log(errors)
+            }).fail(function(error){
+                var err = error.responseJSON;
+                if(err.password){
+                    $('#password').attr('class', 'form-control is-invalid')
+                    $('#password2').attr('class', 'form-control is-invalid')
+                }
+                else{
+                    $('#password').attr('class', 'form-control is-valid')
+                    $('#password2').attr('class', 'form-control is-valid')
+                }
+
+                if(err.email){
+                    $('#email').attr('class', 'form-control is-invalid')
+                }
+                else{
+                    $('#email').attr('class', 'form-control is-valid')
+                }
             })
         }
         else{
-            alert("PASSWORD DO NOT MATCH")
+            $('#password').attr('class', 'form-control is-invalid')
+            $('#password2').attr('class', 'form-control is-invalid')
         }
     })
 })

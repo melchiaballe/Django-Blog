@@ -8,7 +8,7 @@ from taggit.managers import TaggableManager
 
 class Article(models.Model):
     title =  models.CharField(max_length = 200)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_published = models.DateTimeField(auto_now_add = True)
     date_modified = models.DateTimeField(auto_now = True)
