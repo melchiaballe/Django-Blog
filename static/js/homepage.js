@@ -19,6 +19,19 @@ $(document).ready(function(){
                 $('#search_output').modal('show');
             })
         }
+        else if(search_type == 'tags'){
+            $.get(base_url+"/api/search/tags/", data).done(function(data){
+                data.forEach(function(e){
+                    template = showSearchedArticle(e);
+                    $('#search_base').append(template)
+                })
+                $('#search_div').attr('class', 'modal-dialog modal-lg');
+                $('#search_output').modal('show');
+            }).fail(function(error){
+                console.log(error)
+                $('#search_output').modal('show');
+            })
+        }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
                 data.forEach(function(e){
@@ -32,6 +45,12 @@ $(document).ready(function(){
                 $('#search_output').modal('show');
             })
         }
+    })
+
+    $('#add_article').on('click', function(event){
+        event.preventDefault();
+        $('#title').attr('class', 'form-control')
+        $('#invalid_title').empty()
     })
 
     $("#search_output").on("hide.bs.modal", function () {
@@ -80,6 +99,18 @@ $(document).ready(function(){
             }
         }
     })
+
+    $.get(base_url + "/api/article/random").done(function(data){
+        data.forEach(function(e){
+            listRandomArticles(e);
+        })
+    })
+
+    function listRandomArticles(data){
+        template = "<li><b><a href=\""+base_url+"/drf/article/details/"+data.id+"\">"+data.title+"</a></b></li>"
+
+        $('#random_read_list').append(template)
+    }
 
     $.get(base_url +'/api/article').done(function(data){
         data.results.forEach(function(e){
@@ -190,7 +221,7 @@ $(document).ready(function(){
             +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
             +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
-        $('#articles').prepend(template);
+        $('#articles').append(template);
     }
 
     function jumbotronTemplate(article) {

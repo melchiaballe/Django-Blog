@@ -17,6 +17,7 @@
                 <select class="form-control" name="search_type" id="search_type">
                     <option value="article">Article</option>
                     <option value="user">User</option>
+                    <option value="tags">Tags</option>
                 </select>
                 <button class="btn btn-outline-secondary btn-sm" type="submit">search</button>
             </div>
@@ -53,7 +54,7 @@
         {% if user.is_authenticated %}
 
             <div class="text-right">
-                <button class="btn btn-outline-primary btn-sm" type="button" data-toggle="modal" data-target="#addModal">ADD ARTICLE</button>
+                <button id="add_article" name="add_article" class="btn btn-outline-primary btn-sm" type="button" data-toggle="modal" data-target="#addModal">ADD ARTICLE</button>
             </div>
         
         {% endif %}
@@ -76,25 +77,14 @@
                         </div>
                         <div class="col-md-4">
                             <div class="p-3 mb-3 bg-light rounded">
-                                <h4 class="font-italic">About</h4>
-                                <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+                                <h4 class="font-italic">Starting a blog</h4>
+                                <p class="mb-0">It seems like there are so many people out there who are either struggling for 
+                                ideas for their existing blog, or want to start a blog but don’t know what topic to pick.</p>
                             </div>
 
                             <div class="p-3">
-                                <h4 class="font-italic">Archives</h4>
-                                <ol class="list-unstyled mb-0">
-                                <li><a href="#">March 2014</a></li>
-                                <li><a href="#">February 2014</a></li>
-                                <li><a href="#">January 2014</a></li>
-                                <li><a href="#">December 2013</a></li>
-                                <li><a href="#">November 2013</a></li>
-                                <li><a href="#">October 2013</a></li>
-                                <li><a href="#">September 2013</a></li>
-                                <li><a href="#">August 2013</a></li>
-                                <li><a href="#">July 2013</a></li>
-                                <li><a href="#">June 2013</a></li>
-                                <li><a href="#">May 2013</a></li>
-                                <li><a href="#">April 2013</a></li>
+                                <h4 class="font-italic">Random Read</h4>
+                                <ol id="random_read_list" class="list-unstyled mb-0">
                                 </ol>
                             </div>
 
@@ -109,27 +99,9 @@
                         </div>                
                     </div>
                 </div>
-                <!-- PAGINATION PART -->
-                <!--########################################################################################################-->
                     <div align="center">
                     <form id="pagination_form">
                         <ul id="pagination_ul" class="pagination justify-content-center" >
-                            {% comment %} {% if form.has_previous %}
-                                <a class="page-link" href="?page={{ form.previous_page_number }}">previous</a>
-                            {% endif %}
-
-                            {% for i in form.paginator.page_range %}
-                                {% if form.number == i %}
-                                    <li class="active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                                {% else %}
-                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if form.has_next %}
-                                <a class="page-link" href="?page={{ form.next_page_number }}">next</a>
-                            {% endif %}
-                            </li> {% endcomment %}
                         </ul>
                     </form>
                     </div>

@@ -53,6 +53,9 @@ $(document).ready(function(){
             contentType: false,
             data:form_data,
         }).done(function(data) {
+            $('#email').attr('class', 'form-control')
+            $('#invalid_email').empty
+
             $('#display_default').html(
                 "<img src=\""+data.avatar+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.avatar+"\">"+data.avatar+"</a>"
@@ -64,11 +67,11 @@ $(document).ready(function(){
             var err = error.responseJSON;
             if(err.email){
                 $('#email').attr('class', 'form-control is-invalid')
-                $('invalid_email').html(err.email)
+                $('#invalid_email').html(err.email)
             }
             else{
                 $('#email').attr('class', 'form-control is-valid')
-                $('invalid_email').empty()
+                $('#invalid_email').empty()
             }
 
             $('#editModal').modal('hide');
@@ -88,6 +91,19 @@ $(document).ready(function(){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
                 })
+                $('#search_output').modal('show');
+            }).fail(function(error){
+                console.log(error)
+                $('#search_output').modal('show');
+            })
+        }
+        else if(search_type == 'tags'){
+            $.get(base_url+"/api/search/tags/", data).done(function(data){
+                data.forEach(function(e){
+                    template = showSearchedArticle(e);
+                    $('#search_base').append(template)
+                })
+                $('#search_div').attr('class', 'modal-dialog modal-lg');
                 $('#search_output').modal('show');
             }).fail(function(error){
                 console.log(error)

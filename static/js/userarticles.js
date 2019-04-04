@@ -124,6 +124,8 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            $('#title').attr('class', 'form-control')
+            $('#invalid_title').empty()
             $('#display_default').html(
                 "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
@@ -230,6 +232,19 @@ $(document).ready(function(){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
                 })
+                $('#search_output').modal('show');
+            }).fail(function(error){
+                console.log(error)
+                $('#search_output').modal('show');
+            })
+        }
+        else if(search_type == 'tags'){
+            $.get(base_url+"/api/search/tags/", data).done(function(data){
+                data.forEach(function(e){
+                    template = showSearchedArticle(e);
+                    $('#search_base').append(template)
+                })
+                $('#search_div').attr('class', 'modal-dialog modal-lg');
                 $('#search_output').modal('show');
             }).fail(function(error){
                 console.log(error)

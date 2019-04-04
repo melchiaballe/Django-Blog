@@ -13,6 +13,9 @@ urlpatterns = [
     path('article', NewArticleViewSet.as_view({'get': 'list_articles','post': 'create_article'}), name = "drflistarticle"),
     #get all featured article
     path('article/featured', NewArticleViewSet.as_view({'get': 'list_featured_articles'}), name = "drflistfeaturedarticle"),
+    #get all random article
+    path('article/random', NewArticleViewSet.as_view({'get': 'list_random_read_articles'})),
+    
     #get article details
     path('article/details/<int:article_id>', NewArticleViewSet.as_view({'get': 'article_details'}), name = "drfarticledetails"),
     #get all comment
@@ -83,5 +86,6 @@ urlpatterns = [
     #Search
     path('search/user/', SearchViewSet.as_view({'get': 'search_user'})),
     path('search/article/', SearchViewSet.as_view({'get': 'search_article'})),
+    path('search/tags/', SearchViewSet.as_view({'get': 'search_tags'})),
 
 ]

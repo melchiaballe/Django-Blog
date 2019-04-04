@@ -104,6 +104,8 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            $('#comment_content').attr('class', 'form-control')
+            $('#invalid_comment_content').empty()
             $("#comment_content").val(data.content)
         }).fail(function(error){
             console.log(error)
@@ -118,6 +120,8 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
+            $('#title').attr('class', 'form-control')
+            $('#invalid_title').empty()
             $('#display_default').html(
                 "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
@@ -200,10 +204,17 @@ $(document).ready(function(){
             method:$(this).attr('method'),
             data: $(this).serialize()
         }).done(function(data){
+            $('#comment_content').attr('class', 'form-control')
+            $('#invalid_comment_content').empty()
             $('#comment_content'+data.id).html("&nbsp"+data.content)
             $('#edit_comment').modal('hide');
         }).fail(function(error){
-            console.log(error)
+            var err = error.responseJSON;
+            if(err.content)
+            {
+                $('#comment_content').attr('class', 'form-control is-invalid')
+                $('#invalid_comment_content').html(err.content)
+            }
         })
     })
 
@@ -217,11 +228,18 @@ $(document).ready(function(){
             data: $(this).serialize()
         }).done(function(data) {
             var comment = data;
+            $('#content').attr('class', 'form-control')
+            $('#invalid_content').empty()
             template = getComments(comment)
             $('#content').val('')
             $('#comment_section').append(template)
         }).fail(function(error) {
-            console.log(error);
+            var err = error.responseJSON;
+            if(err.content)
+            {
+                $('#content').attr('class', 'form-control is-invalid')
+                $('#invalid_content').html(err.content)
+            }
         })
     })
 
@@ -261,6 +279,19 @@ $(document).ready(function(){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
                 })
+                $('#search_output').modal('show');
+            }).fail(function(error){
+                console.log(error)
+                $('#search_output').modal('show');
+            })
+        }
+        else if(search_type == 'tags'){
+            $.get(base_url+"/api/search/tags/", data).done(function(data){
+                data.forEach(function(e){
+                    template = showSearchedArticle(e);
+                    $('#search_base').append(template)
+                })
+                $('#search_div').attr('class', 'modal-dialog modal-lg');
                 $('#search_output').modal('show');
             }).fail(function(error){
                 console.log(error)

@@ -60,6 +60,11 @@ class NewArticleViewSet(viewsets.ViewSet):
         articles =  Article.objects.filter(is_featured=True).order_by('?')[:3]
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=200)
+    
+    def list_random_read_articles(self, request, **kwargs):
+        articles =  Article.objects.all().order_by('?')[:10]
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=200)
 
     def list_user_article(self, request, **kwargs):
         user =  get_object_or_404(User, id=kwargs.get('user_id'))
@@ -308,5 +313,13 @@ class SearchViewSet(viewsets.ViewSet):
         user = User.objects.filter(firstname__contains=context)
         if(user):
             serializer = UserSerializer(user, many=True)
+            return Response(serializer.data, status=202)
+        return Response({'error':'Does not exist'}, status=400)
+    
+    def search_tags(self, request, **kwargs):
+        context = request.GET.get('search')
+        article = Article.objects.filter(tags__name__in=[context])
+        if(article):
+            serializer = ArticleSerializer(article, many=True)
             return Response(serializer.data, status=202)
         return Response({'error':'Does not exist'}, status=400)

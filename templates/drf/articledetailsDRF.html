@@ -18,6 +18,7 @@
                 <select class="form-control" name="search_type" id="search_type">
                     <option value="article">Article</option>
                     <option value="user">User</option>
+                    <option value="tags">Tags</option>
                 </select>
                 <button class="btn btn-outline-secondary btn-sm" type="submit">search</button>
             </div>
@@ -68,6 +69,8 @@
                                         <div class="form-group">
                                             <label>Comment</label>
                                             <input type="text" id="content" name="content" class='form-control' placeholder='Enter a comment'>
+                                            <div id="invalid_content" class="invalid-feedback">
+                                            </div>
                                         </div>
                                 </form>
                             <div class="text-right">
@@ -102,7 +105,9 @@
                 {% csrf_token %}
                     <div class="form-group">
                         <label for="content" class="col-form-label">Comment Content:</label>
-                        <textarea row="5" class="form-control" id="comment_content" name="comment_content"></textarea>
+                        <input type="text" class="form-control" id="comment_content" name="comment_content"></input>
+                        <div id="invalid_comment_content" class="invalid-feedback">
+                        </div>
                     </div>
                     <input type="hidden" class="form-control" id="edit_comment_id" name="edit_comment_id">
                     <input type="hidden" class="form-control" id="owner" name="user_id" value={{request.user.id}}>

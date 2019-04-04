@@ -69,6 +69,19 @@ $(document).ready(function(){
                 $('#search_output').modal('show');
             })
         }
+        else if(search_type == 'tags'){
+            $.get(base_url+"/api/search/tags/", data).done(function(data){
+                data.forEach(function(e){
+                    template = showSearchedArticle(e);
+                    $('#search_base').append(template)
+                })
+                $('#search_div').attr('class', 'modal-dialog modal-lg');
+                $('#search_output').modal('show');
+            }).fail(function(error){
+                console.log(error)
+                $('#search_output').modal('show');
+            })
+        }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
                 data.forEach(function(e){
