@@ -20,7 +20,6 @@ $(document).ready(function(){
                 window.location.href = base_url+"/drf/homepage";
             }).fail(function(error){
                 var err = error.responseJSON;
-                console.log(err)
                 if(err.old_password){
                     $('#old_password').attr('class', 'form-control is-invalid')
                     $('#invalid_old_password').html(err.old_password);

@@ -75,7 +75,6 @@ $(document).ready(function(){
             }
 
             $('#editModal').modal('hide');
-            console.log(err)
         })
     })
 

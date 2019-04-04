@@ -96,7 +96,6 @@ $(document).ready(function(){
     $(document).on('click', '#edit', function(event){
         var comment_id = $(this).data('id');
         $("#edit_comment_id").val(comment_id);
-        console.log(comment_id);
 
         var url = base_url + "/api/comment/details/" +comment_id
 

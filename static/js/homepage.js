@@ -69,7 +69,8 @@ $(document).ready(function(){
             $('#pagination_ul').empty()
 
             data.results.forEach(function(e){
-                articleTemplate(e)
+                template = articleTemplate(e)
+                $('#articles').append(template);
             })
             if(data.pagination.has_prev){
                 template = paginationHasPrev(data.pagination.has_prev)
@@ -114,7 +115,8 @@ $(document).ready(function(){
 
     $.get(base_url +'/api/article').done(function(data){
         data.results.forEach(function(e){
-            articleTemplate(e)
+            template = articleTemplate(e)
+            $('#articles').append(template);
         })
         if(data.pagination.has_prev){
             template = paginationHasPrev(data.pagination.has_prev)
@@ -172,7 +174,8 @@ $(document).ready(function(){
                 data: form_data,
             }).done(function(data){
                 var article = data;
-                articleTemplate(article)
+                template = articleTemplate(article)
+                $('#articles').prepend(template);
                 $('#addModal').modal('hide');
                 clearUserInputFields();        
             }).fail(function(error) {
@@ -221,7 +224,8 @@ $(document).ready(function(){
             +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
             +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
-        $('#articles').append(template);
+        
+        return template
     }
 
     function jumbotronTemplate(article) {
