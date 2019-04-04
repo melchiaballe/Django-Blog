@@ -1,13 +1,10 @@
 $(document).ready(function(){
-    console.log("I AM READY");
     var base_url = window.location.origin
 
     $('#updateUserForm').on('submit', function(event){
         event.preventDefault()
 
         var url = base_url +"/api/user/update/password";
-        console.log(url);
-        console.log($(this).serialize());
 
         var new_pass = $('#new_password').val()
         var conf_new_pass = $('#confirm_new_password').val()
@@ -18,7 +15,6 @@ $(document).ready(function(){
                 method:'post',
                 data:$(this).serialize(),   
             }).done(function(data){
-                console.log(data);
                 alert("DONE CHANGING")
                 $('#editModal').modal('hide')
                 window.location.href = base_url+"/drf/homepage";
@@ -38,13 +34,11 @@ $(document).ready(function(){
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -57,7 +51,6 @@ $(document).ready(function(){
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)

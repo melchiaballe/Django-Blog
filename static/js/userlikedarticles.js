@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    console.log("***********************************")
 
     var base_url = window.location.origin;
     var user_id = $('#user_id').val();
@@ -13,13 +12,11 @@ $(document).ready(function() {
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -32,7 +29,6 @@ $(document).ready(function() {
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)

@@ -53,7 +53,6 @@ $(document).ready(function(){
             contentType: false,
             data:form_data,
         }).done(function(data) {
-            console.log(data)
             $('#display_default').html(
                 "<img src=\""+data.avatar+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.avatar+"\">"+data.avatar+"</a>"
@@ -69,13 +68,11 @@ $(document).ready(function(){
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -88,7 +85,6 @@ $(document).ready(function(){
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)

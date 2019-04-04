@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    console.log("-------------------------------------")
     var base_url = window.location.origin;
 
     var user_id = $('#user_id').val();
@@ -85,6 +84,8 @@ $(document).ready(function(){
                 method:"post",
             }).done(function(data) {
                 $('#follow_user').html("<button id=\"follow_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+!followbool+"\" ><b>Follow Me</b></button>");
+                getTotalFollowing(user_id);
+                getTotalFollower(user_id);
             }).fail(function(errors){
                 console.log(errors)
             });
@@ -99,6 +100,8 @@ $(document).ready(function(){
                 },
             }).done(function(data) {
                 $('#follow_user').html("<button id=\"follow_btn\" class=\"btn btn-primary btn-sm\" value=\""+!followbool+"\" ><b>Followed</b></button>");
+                getTotalFollowing(user_id);
+                getTotalFollower(user_id);
             }).fail(function(errors){
                 console.log(errors)
             });
@@ -127,6 +130,8 @@ $(document).ready(function(){
             )
             $("#title").val(data.title)
             $("#description").val(data.description)
+            tags = data.tags.join(" ");
+            $("#tags").val(tags);
         }).fail(function(error){
             console.log(error)
         })
@@ -212,13 +217,11 @@ $(document).ready(function(){
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -231,7 +234,6 @@ $(document).ready(function(){
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)
@@ -248,6 +250,13 @@ $(document).ready(function(){
     $("#search_output").on("hide.bs.modal", function () {
         $("#search_base").empty();
     });
+
+    // $("#edit_article").on("hide.bs.modal", function () {
+    //     $("#title").val(" ");
+    //     $("#article_image").val(" ");
+    //     $("#description").val(" ");
+    //     $("#tags").val(" ");
+    // });
 
     function showSearchedUser(data){
         name = getSearchName(data);

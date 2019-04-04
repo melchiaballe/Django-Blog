@@ -1,17 +1,14 @@
 $(document).ready(function(){
-    console.log("<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>");
     var base_url = window.location.origin;
 
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -24,7 +21,6 @@ $(document).ready(function(){
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)
@@ -105,7 +101,6 @@ $(document).ready(function(){
 
     $('.article-form').on('submit', function(event) {
         event.preventDefault();
-        console.log("-------------------------------------------")
         //create article
         var dt = $('#date').val(new Date($.now()));
 
@@ -146,7 +141,6 @@ $(document).ready(function(){
                 data: form_data,
             }).done(function(data){
                 var article = data;
-                console.log(article)
                 articleTemplate(article)
                 $('#addModal').modal('hide');
                 clearUserInputFields();        

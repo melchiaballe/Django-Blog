@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    console.log("I AM READY TO REGISTER")
     var base_url = window.location.origin;
 
     $('#registerForm').on('submit', function(event){

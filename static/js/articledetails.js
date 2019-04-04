@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    console.log("+++++++++++++++++++++++++++++++++++++++++++");
 
     var base_url = window.location.origin;
     var article_id = $('#article_id').val();
@@ -96,7 +95,8 @@ $(document).ready(function(){
 
     $(document).on('click', '#edit', function(event){
         var comment_id = $(this).data('id');
-        $("#edit_comment_id").val( comment_id );
+        $("#edit_comment_id").val(comment_id);
+        console.log(comment_id);
 
         var url = base_url + "/api/comment/details/" +comment_id
 
@@ -118,7 +118,6 @@ $(document).ready(function(){
             url:url,
             method: 'get',
         }).done(function(data){
-            console.log(data)
             $('#display_default').html(
                 "<img src=\""+data.article_image+"\" width=\"50\" height=\"50\"></img>"
                 +"<a href=\"http://localhost:8000"+data.article_image+"\">"+data.article_image+"</a>"
@@ -131,11 +130,7 @@ $(document).ready(function(){
             console.log(error)
         })
     })
-    //
-    //
-    //========================================================================================================================================
-    //
-    //
+
     $('#editArticle').on('submit', function(event){
         event.preventDefault();
 
@@ -175,7 +170,6 @@ $(document).ready(function(){
             contentType: false,
             data: form_data,
         }).done(function(data){
-            console.log(data)
             $('#tags_div').empty()
             template = getTags(data.tags)
             $('#tags_div').append(template)
@@ -187,10 +181,6 @@ $(document).ready(function(){
             console.log(error)
         })
     })
-
-    // $(document).on('click', '#dismiss_show_users', function(event){
-    //     $("#show_user_like").empty();
-    // })
 
     $("#show_users").on("hide.bs.modal", function () {
         $("#show_user_like").empty();
@@ -231,6 +221,12 @@ $(document).ready(function(){
         })
     })
 
+    $(document).on('click', '#delete', function(event){
+        var comment_id = $(this).data('id');
+        $("#delete_comment_id").val(comment_id);
+
+    })
+
     $('#deleteComment').on('submit', function(event){
         event.preventDefault();
         comment_id = $('#delete_comment_id').val()
@@ -251,13 +247,12 @@ $(document).ready(function(){
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
         var data = $(this).serialize();
-        console.log(data);
+
         
         var search_type = $('#search_type').val()
 
         if(search_type == 'user'){
             $.get(base_url+"/api/search/user/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedUser(e);
                     $('#search_base').append(template)
@@ -270,7 +265,6 @@ $(document).ready(function(){
         }
         else{
             $.get(base_url+"/api/search/article/", data).done(function(data){
-                console.log(data)
                 data.forEach(function(e){
                     template = showSearchedArticle(e);
                     $('#search_base').append(template)
