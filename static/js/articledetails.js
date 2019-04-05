@@ -17,12 +17,18 @@ $(document).ready(function(){
 
     //bool check if user liked
     $.get(base_url +'/api/article/'+article_id+'/user/likes').done(function(data) {
-
-        like_btn = likeButton(data);
-        $('#like_button').append(like_btn)
-        
-        //get total likes
-        getTotalLikes()
+        if(user_id != "None"){
+            like_btn = likeButton(data);
+            $('#like_button').append(like_btn)
+            //get total likes
+            getTotalLikes()
+        }
+        else{
+            like_btn = NoUserlikeButton()
+            $('#like_button').append(like_btn)
+            //get total likes
+            getTotalLikes()
+        }
     })
     
     //OPEN ON MODAL
@@ -525,6 +531,12 @@ $(document).ready(function(){
                 +"</div>";
         }
 
+        return btn;
+    }
+
+    function NoUserlikeButton(){
+        var btn = "<button class=\"btn btn-outline-primary btn-sm\" id=\"open_like_user\" data-toggle=\"modal\" data-target=\"#show_users\">"
+               + "<span class=\"badge badge-light\" id=\"total_likes\">totaaaaal likes</span> people liked this article</button>"
         return btn;
     }
 

@@ -218,12 +218,14 @@ class LikeViewSet(viewsets.ViewSet):
 
     def user_likes_article(self, request, **kwargs):
         article =  get_object_or_404(Article, id=kwargs.get('article_id'))
-        userlike = ArticleLikes.objects.filter(article=article, likebool=True, owner=request.user)
-
-        if not userlike:
-            returnbool = False
+        if request.user.is_authenticated:
+            userlike = ArticleLikes.objects.filter(article=article, likebool=True, owner=request.user)
+            if not userlike:
+                returnbool = False
+            else:
+                returnbool = True
         else:
-            returnbool = True
+            returnbool = False
 
         return Response(returnbool, status=200)
     

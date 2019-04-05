@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block switch %}
-    {% if user.is_authenticated %}
     <form name="search_form">
         <div class="input-group ">
             <input type="text" class="form-control" placeholder="search" aria-label="search" name="search" name="search">
@@ -25,6 +24,7 @@
         </div>
     </form>
     &nbsp
+    {% if user.is_authenticated %}
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if request.user.firstname %}
@@ -78,6 +78,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            {% else %}
+                <div class="mb-2" id="like_button">
                 </div>
             {% endif %}
         </div>
