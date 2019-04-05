@@ -46,6 +46,7 @@ $(document).ready(function(){
         else{
             $('#new_password').attr('class', 'form-control is-invalid')
             $('#confirm_new_password').attr('class', 'form-control is-invalid')
+            $('#invalid_new_password').html("password do not match")
             $('#editModal').modal('hide')
         }
     })

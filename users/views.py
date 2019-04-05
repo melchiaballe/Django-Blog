@@ -44,7 +44,7 @@ class LoginView(TemplateView):
                 return redirect('blog:drfhome')
             else:
                 form = UserLoginForm(request.POST)
-                form.add_error(None, "Invalid User Entry")
+                form.add_error('password', "Invalid Password")
                 return render(request, 'users/login.html', {'form':form})
         else:
             return render(request, 'users/login.html', {'form':form})
