@@ -2,6 +2,70 @@ $(document).ready(function(){
     var base_url = window.location.origin;
     var user_id = $('#user_id').val();
 
+    $(document).on('submit', '#addComment', function(event){
+        var article_id = $('#article_id_comment').val()
+        event.preventDefault();
+
+        var url = base_url+"/api/"+article_id+"/comment"
+
+        var csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url:url,
+            method:"post",
+            data: $(this).serialize(),
+        }).done(function(data){
+            var comment = data;
+            $('#content').attr('class', 'form-control')
+            $('#invalid_content').empty()
+            template = getComments(comment)
+            $('#content').val('')
+            $('#comment_list').append(template)
+            total_comment = getTotalComments(article_id)
+            $('#total_comments'+article_id).html(total_comment)
+        }).fail(function(error){
+            var err = error.responseJSON;
+            if(err.content)
+            {
+                $('#content').attr('class', 'form-control is-invalid')
+                $('#invalid_content').html(err.content)
+            }
+        })
+    })
+
+    $(document).on('click', '#homepage_comment_btn', function(event){
+        var article_id = $(this).data('id');
+        $('#article_id_comment').val(article_id)
+
+        if(user_id != "None"){
+            user = userCommentFields();
+            $('#comments_base').append(user)
+        }
+        else{
+            div = viewCommentFields()
+            $('#comments_base').append(div)
+        }
+
+        $.get(base_url +'/api/article/'+article_id+'/comments').done(function(data) {
+            $.get(base_url+"/api/article/details/"+article_id).done(function(data){
+                $('#comment_title').html("<h3>"+data.title+"</h3>")
+            })
+
+            data.forEach(function(e){
+                template = getComments(e)
+                $('#comment_list').prepend(template)
+            })
+        })
+    })
+
     $(document).on('click', '#homepage_like_btn', function(event){
         var article_id = $(this).data('id');
 
@@ -11,6 +75,10 @@ $(document).ready(function(){
             if(user_id != "None"){
                 like_btn = likeButton(data);
                 $('#likes_base').append(like_btn)
+            }
+            else{
+                div = likeListDiv()
+                $('#likes_base').append(div)
             }
 
             var url = base_url +'/api/article/'+article_id+'/likes'
@@ -22,6 +90,11 @@ $(document).ready(function(){
                     template = showLikes(e);
                     $('#like_list').append(template)
                 })
+
+                $.get(base_url+"/api/article/details/"+article_id).done(function(data){
+                    $('#likes_title').html("<h3>"+data.title+"</h3>")
+                })
+
             }).fail(function(error){
                 console.log(error)
             })
@@ -135,6 +208,10 @@ $(document).ready(function(){
 
     $("#likes_output").on("hide.bs.modal", function () {
         $("#likes_base").empty();
+    });
+
+    $("#comments_output").on("hide.bs.modal", function () {
+        $("#comments_base").empty();
     });
 
     $("#pagination_form").on('submit', function(event){
@@ -302,7 +379,7 @@ $(document).ready(function(){
             +            "<b> Continue Reaing</b></a></p>"
             +    "</div>"
             +    "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
-            +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
+            +    "<button id=\"homepage_comment_btn\" class=\"btn btn-secondary btn-sm\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#comments_output\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
         
         return template
@@ -328,7 +405,7 @@ $(document).ready(function(){
         +           "</a>"
         +       "<div class=\"caption\">"
         +           "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
-        +           "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
+        +           "<button id=\"homepage_comment_btn\" class=\"btn btn-secondary btn-sm\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#comments_output\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +       "</div>"
         +   "</div>"
         +   "<div class=\"col-md-8\">"
@@ -366,7 +443,7 @@ $(document).ready(function(){
         +            "</div>"
         +        "<div class=\"caption\">"
         +            "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
-        +            "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
+        +            "<button id=\"homepage_comment_btn\" class=\"btn btn-secondary btn-sm\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#comments_output\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +        "</div>"
         +    "</div>"
         +"</div>"
@@ -482,11 +559,13 @@ $(document).ready(function(){
 
     function likeButton(data){
         if(data){
-            btn = "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-primary btn-sm\" value=\""+data+"\">LIKED</button></div> &nbsp"
+            btn = "<div id=\"likes_title\" align=\"center\"></div>"
+                + "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-primary btn-sm\" value=\""+data+"\">LIKED</button></div> &nbsp"
                 + "<div id=\"like_list\"></div>"
         }
         else{
-            btn = "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+data+"\">LIKE</button></div> &nbsp"
+            btn = "<div id=\"likes_title\" align=\"center\"></div>"
+                + "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+data+"\">LIKE</button></div> &nbsp"
                 + "<div id=\"like_list\"></div>"
         }
 
@@ -512,6 +591,40 @@ $(document).ready(function(){
         return template;
     }
 
+    function likeListDiv(){
+        div = "<div id=\"likes_title\" align=\"center\"></div>" 
+            + "<div id=\"like_list\"></div>"
+
+        return div
+    }
+
+    function viewCommentFields(){
+        div = "<div id=\"comment_title\" align=\"center\"></div>" 
+            + "<div id=\"comment_list\"></div>"
+
+        return div
+    }
+
+    function userCommentFields(){
+        btn = "<div id=\"comment_title\" align=\"center\"></div>"
+            + "<div id=\"comment_input_div\">"
+            +    "<form id=\"addComment\" name=\"addComment\" novalidate>"
+            +            "<div class=\"form-group\">"
+            +                "<label>Comment</label>"
+            +                "<input type=\"text\" id=\"content\" name=\"content\" class='form-control' placeholder='Enter a comment'>"
+            +                "<div id=\"invalid_content\" class=\"invalid-feedback\">"
+            +                "</div>"
+            +            "</div>"
+            +    "<div class=\"text-right\">"
+            +        "<button type=\"submit\" class=\"btn btn-outline-dark\">Add Comment</button>"
+            +    "</div>"
+            +    "</form>"
+            + "</div>"
+            + "<div id=\"comment_list\"></div>"
+
+        return btn;
+    }
+
     function userAvatar(data) {
         var img = "";
         if(data.owner.avatar)
@@ -519,6 +632,25 @@ $(document).ready(function(){
             img = "<img src=\""+data.owner.avatar+"\" width=\"40\" height=\"40\">"
         }
         return img
+    }
+
+    function getComments(data){
+        name = getName(data);
+        img = userAvatar(data);
+        var template=
+        "<div class=\"row\" id=\"comment" + data.id+"\">"
+        +    "<div class=\"col-md-8\">"
+        +        "<div class=\"d-flex\">"
+        +            img
+        +            "<div>"
+        +                "&nbsp<i><b>"+name+"</b></i>"
+        +                "<p id=\"comment_content"+data.id+"\">&nbsp" + data.content + "</p>"
+        +            "</div>"
+        +        "</div>"
+        +    "</div>"
+        +"</div>"
+
+        return template
     }
 
     function getCookie(name) {
