@@ -42,7 +42,7 @@ class NewArticleViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=400)
     
     def list_articles(self, request, **kwargs):
-        articles =  Article.objects.all().order_by('-date_published')
+        articles =  Article.objects.filter(is_featured=False).order_by('-date_published')
         p = PageNumberPagination()
         page = p.paginate_queryset(articles, request)
         serializer = ArticleSerializer(page, many=True)

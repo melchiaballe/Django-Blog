@@ -1,5 +1,81 @@
 $(document).ready(function(){
     var base_url = window.location.origin;
+    var user_id = $('#user_id').val();
+
+    $(document).on('click', '#homepage_like_btn', function(event){
+        var article_id = $(this).data('id');
+
+        $('#article_id_cont').val(article_id)
+
+        $.get(base_url +'/api/article/'+article_id+'/user/likes').done(function(data) {
+            if(user_id != "None"){
+                like_btn = likeButton(data);
+                $('#likes_base').append(like_btn)
+            }
+
+            var url = base_url +'/api/article/'+article_id+'/likes'
+            $.ajax({
+                url:url,
+                method: 'get',
+            }).done(function(data){
+                data.forEach(function(e){
+                    template = showLikes(e);
+                    $('#like_list').append(template)
+                })
+            }).fail(function(error){
+                console.log(error)
+            })
+        })
+    })
+
+    $(document).on('click', '#like_btn', function(event){
+        checkflag = $(this).val();
+        checkflag = (checkflag == 'true');
+        var article_id = $('#article_id_cont').val();
+        var csrftoken = getCookie('csrftoken');
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        if(checkflag){
+            var url = base_url + '/api/article/'+article_id+'/like/delete'
+
+            $.ajax({
+                url:url,
+                method: 'post',
+            }).done(function(data){
+                $('#like_btn_div').html("<button id=\"like_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+!checkflag+"\">LIKE</button>")
+                $('#like'+user_id).remove()
+                var total_likes = getTotalLikes(article_id);
+                $('#total_likes'+article_id).html(total_likes)
+            }).fail(function(error){
+                console.log(error);
+            })
+        }
+        else{
+            var url = base_url + '/api/article/'+article_id+'/likes'
+            $.ajax({
+                url:url,
+                method: 'post',
+                data:{
+                    'likebool': true
+                },
+            }).done(function(data){
+                $('#like_btn_div').html("<button id=\"like_btn\" class=\"btn btn-primary btn-sm\" value=\""+!checkflag+"\">LIKED</button>")
+                template = showLikes(data);
+                var total_likes = getTotalLikes(article_id);
+                $('#total_likes'+article_id).html(total_likes)
+                $('#like_list').append(template)
+            }).fail(function(error){
+                console.log(error);
+            })
+        }
+    })
 
     $('form[name=search_form]').on('submit', function(event) {
         event.preventDefault();
@@ -55,6 +131,10 @@ $(document).ready(function(){
 
     $("#search_output").on("hide.bs.modal", function () {
         $("#search_base").empty();
+    });
+
+    $("#likes_output").on("hide.bs.modal", function () {
+        $("#likes_base").empty();
     });
 
     $("#pagination_form").on('submit', function(event){
@@ -221,7 +301,7 @@ $(document).ready(function(){
             +            "<a href=\"article/details/"+article.id+"\" >"
             +            "<b> Continue Reaing</b></a></p>"
             +    "</div>"
-            +    "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+            +    "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
             +    "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
             +"</div><br/>";
         
@@ -230,8 +310,8 @@ $(document).ready(function(){
 
     function jumbotronTemplate(article) {
         var name = getName(article);
-        var total_likes = getTotalFeaturedLikes(article.id);
-        var total_comments = getTotalFeaturedComments(article.id);
+        var total_likes = getTotalLikes(article.id);
+        var total_comments = getTotalComments(article.id);
 
         var template = "<div class=\"row\">"
         +   "<div class=\"col-md-4\">"
@@ -247,8 +327,8 @@ $(document).ready(function(){
         +               "<b>Continue reading</b>"
         +           "</a>"
         +       "<div class=\"caption\">"
-        +           "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"featured_like_id"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
-        +           "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"featured_total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
+        +           "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+        +           "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +       "</div>"
         +   "</div>"
         +   "<div class=\"col-md-8\">"
@@ -261,8 +341,8 @@ $(document).ready(function(){
 
     function thumbnailTemplate(article) {
         var name = getName(article);
-        var total_likes = getTotalThumbnailLikes(article.id);
-        var total_comments = getTotalThumbnailComments(article.id);
+        var total_likes = getTotalLikes(article.id);
+        var total_comments = getTotalComments(article.id);
 
         var template = "<div class=\"col-md-6\">"
         +    "<div class=\"thumbnail\">"
@@ -285,8 +365,8 @@ $(document).ready(function(){
         +                "</div>"
         +            "</div>"
         +        "<div class=\"caption\">"
-        +            "<button class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\">Likes &nbsp<span id=\"thumbnail_like_id"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
-        +            "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"thumbnail_total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
+        +            "<button id=\"homepage_like_btn\" class=\"btn btn-primary btn-sm\" style=\"margin-right: 4px;\" data-id=\""+article.id+"\" data-toggle=\"modal\" data-target=\"#likes_output\">Likes &nbsp<span id=\"total_likes"+article.id+"\" class=\"badge badge-light\">"+total_likes+"</span></button>"
+        +            "<button class=\"btn btn-secondary btn-sm\">Comments &nbsp<span id=\"total_comments"+article.id+"\" class=\"badge badge-light\">"+total_comments+"</span></button>"
         +        "</div>"
         +    "</div>"
         +"</div>"
@@ -308,35 +388,23 @@ $(document).ready(function(){
         })
     }
 
-    function getTotalFeaturedLikes(article_id){
-        $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
-            $('#featured_like_id'+article_id).html(data)
-        })
-    }
-
-    function getTotalThumbnailLikes(article_id){
-        $.get(base_url +'/api/article/'+article_id+'/total/likes').done(function(data) {
-            $('#thumbnail_like_id'+article_id).html(data)
-        })
-    }
-
     function getTotalComments(article_id){
         $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
             $('#total_comments'+article_id).html(data)
         })
     }
 
-    function getTotalFeaturedComments(article_id){
-        $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
-            $('#featured_total_comments'+article_id).html(data)
-        })
-    }
+    // function getTotalFeaturedComments(article_id){
+    //     $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
+    //         $('#featured_total_comments'+article_id).html(data)
+    //     })
+    // }
 
-    function getTotalThumbnailComments(article_id){
-        $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
-            $('#thumbnail_total_comments'+article_id).html(data)
-        })
-    }
+    // function getTotalThumbnailComments(article_id){
+    //     $.get(base_url +'/api/article/'+article_id+'/total/comments').done(function(data) {
+    //         $('#thumbnail_total_comments'+article_id).html(data)
+    //     })
+    // }
 
     function showSearchedUser(data){
         name = getSearchName(data);
@@ -410,6 +478,47 @@ $(document).ready(function(){
             name = article.owner.email;
         }
         return name;
+    }
+
+    function likeButton(data){
+        if(data){
+            btn = "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-primary btn-sm\" value=\""+data+"\">LIKED</button></div> &nbsp"
+                + "<div id=\"like_list\"></div>"
+        }
+        else{
+            btn = "<div id=\"like_btn_div\"><button id=\"like_btn\" class=\"btn btn-outline-primary btn-sm\" value=\""+data+"\">LIKE</button></div> &nbsp"
+                + "<div id=\"like_list\"></div>"
+        }
+
+        return btn;
+    }
+
+    function showLikes(data){
+        name = getName(data);
+        img = userAvatar(data);
+
+        var template=
+        "<div class=\"row\" id=\"like"+data.owner.id+"\">"
+        +    "<div class=\"col-md\">"
+        +        "<div class=\"d-flex\">"
+        +            img
+        +            "<div>"
+        +                "&nbsp <a href=\""+base_url+"/drf/user/article/"+data.owner.id+"\"><i><b>"+name+"</b></i></a>"
+        +            "</div>"
+        +        "</div>"
+        +    "</div>"
+        +"</div>"
+
+        return template;
+    }
+
+    function userAvatar(data) {
+        var img = "";
+        if(data.owner.avatar)
+        {
+            img = "<img src=\""+data.owner.avatar+"\" width=\"40\" height=\"40\">"
+        }
+        return img
     }
 
     function getCookie(name) {
